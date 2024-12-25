@@ -1,76 +1,29 @@
 import request from "supertest";
 import app from "../index";
+import mongoose from "mongoose";
+mongoose.set("strictQuery", false);
 
-interface ChuckJokeResponse {
-  categories: string[];
-  created_at: string;
-  icon_url: string;
-  id: string;
-  updated_at: string;
-  url: string;
-  value: string;
-}
+const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_PORT, MONGO_DB, MONGO_HOSTNAME } =
+  process.env;
 
-const mockupResponseChuck: ChuckJokeResponse = {
-  categories: [],
-  created_at: "2020-01-05 13:42:26.766831",
-  icon_url: "https://api.chucknorris.io/img/avatar/chuck-norris.png",
-  id: "sX-YjxISRmKwI5HG_as1Rw",
-  updated_at: "2020-01-05 13:42:26.766831",
-  url: "https://api.chucknorris.io/jokes/sX-YjxISRmKwI5HG_as1Rw",
-  value:
-    "You know how the old saying goes: You can take the boy out of Texas, but you can't stop Chuck Norris from killing you. And that boy.",
-};
+const MONGO_URI = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
 
-global.fetch = jest.fn();
-
-describe("GET api/chiste/${parametro}", () => {
-  beforeEach(() => {
-    jest.clearAllMocks(); // Resetear mocks antes de cada test
+describe("GET api/chistes?fuente=$parametro", () => {
+  beforeAll(async () => {
+    await mongoose.connect(MONGO_URI);
   });
 
-  afterAll(() => {
-    jest.resetAllMocks(); // Resetear luego de los tests
+  afterAll(async () => {
+    await mongoose.connection.close();
   });
 
-  it("GET api/chiste/chuck Debería traer un chiste de la api de chuck", async () => {
-    // Crea un mock del fetch
-    (fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockupResponseChuck,
-    });
-
-    const response = await request(app).get("/api/chiste/chuck");
+  it("GET api/chistes?fuente=chuck Debería traer un chiste de la api de chuck", async () => {
+    const response = await request(app).get("/api/chistes?fuente=chuck");
 
     expect(response.status).toBe(200); // Espero que el estatus sea ok
-
-    // Propiedas del objeto de la respuesta mock
-    const keys = Object.keys(mockupResponseChuck) as Array<
-      keyof typeof mockupResponseChuck
-    >;
-
-    /*
-    keys.forEach((key) => {
-      console.log(key);
-    }); */
-
-    // La respuesta de la api debe tener estos campos
-    keys.forEach((key) => {
-      expect(response.body).toHaveProperty(key); // categories, created_at...
-    });
-
-    // // La respuesta de la api debe tener estos campos
-    // expect(response.body).toHaveProperty('categories');
-    // expect(response.body).toHaveProperty('created_at');
-    // expect(response.body).toHaveProperty('icon_url');
-    // expect(response.body).toHaveProperty('id');
-    // expect(response.body).toHaveProperty('updated_at');
-    // expect(response.body).toHaveProperty('url');
-    // expect(response.body).toHaveProperty('value');
-
-    // Comprobar si se llamó a la api de
-    expect(fetch).toHaveBeenCalledWith(
-      "https://api.chucknorris.io/jokes/random",
-    );
+    // Expect propiedades esenciales
+    expect(response.body).toHaveProperty("id");
+    expect(response.body).toHaveProperty("value");
+    expect(response.body).toHaveProperty("url");
   });
 });
