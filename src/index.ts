@@ -3,9 +3,12 @@ import "dotenv/config"; // Carga variables locales del .env
 import express from "express";
 import connectDb from "./db/connect";
 import Chiste from "./models/chiste-model";
+import ChistesRouter from "./routes/chiste-routes";
 
 const app = express();
 const PORT = process.env.PORT || 3005;
+
+app.use("/api/chistes", ChistesRouter);
 
 app.get("/", async (_req, res) => {
   const nuevoChiste = await Chiste.create({
