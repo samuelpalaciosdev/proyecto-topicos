@@ -24,7 +24,7 @@ app.get("/", async (_req, res) => {
 // Inicia el servidor
 const start = async () => {
   try {
-    await connectDb();
+    // await connectDb();
     app.listen(PORT, () => console.log(`Server is listening on port: ${PORT}`));
   } catch (error) {
     console.log(error);
@@ -32,3 +32,5 @@ const start = async () => {
 };
 
 start();
+
+export default app;
