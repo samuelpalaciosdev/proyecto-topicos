@@ -8,8 +8,10 @@ export async function getChiste(req: Request, res: Response) {
   try {
     const { fuente } = req.query;
 
-    // Si no se envía el query fuente /api/chistes?fuente
-    if (!fuente) {
+    const fuenteValida = getChisteSchema.safeParse(req);
+
+    // Check si la fuente no es válida
+    if (!fuente || !fuenteValida.success) {
       return res.status(400).json({
         mensaje:
           "Fuente no válida, debes especificar una fuente (chuck, dad, propio)",
@@ -17,11 +19,21 @@ export async function getChiste(req: Request, res: Response) {
       });
     }
 
-    return res.status(200).json({
-      mensaje: `Hola, solicitaste un chiste de la fuente ${fuente}`,
-      success: true,
+    if (fuente === FuenteDelChiste.Chuck) {
+      const response = await fetch("https://api.chucknorris.io/jokes/random");
+      const data = await response.json();
+
+      return res.status(200).json(data);
+    }
+
+    // Default response if the fuente is unrecognized
+    return res.status(400).json({
+      mensaje:
+        "Fuente no válida, debes especificar una fuente válida (chuck, dad, propio)",
+      success: false,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({
       mensaje: "Ocurrió un error al buscar el chiste. Intenta nuevamente.",
       success: false,
