@@ -1,21 +1,15 @@
 import request from "supertest";
 import app from "../index";
-import mongoose from "mongoose";
-mongoose.set("strictQuery", false);
 
-// Ref: ver si puedo hacer esto con lo que tengo en db/
-const { MONGO_USERNAME, MONGO_PASSWORD, MONGO_PORT, MONGO_DB, MONGO_HOSTNAME } =
-  process.env;
-
-const MONGO_URI = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+import { connectDb, disconnectDb } from "../db/connect";
 
 describe("GET api/chistes?fuente=$parametro", () => {
   beforeAll(async () => {
-    await mongoose.connect(MONGO_URI);
+    await connectDb();
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
+    await disconnectDb();
   });
 
   it("GET api/chistes?fuente=chuck Debería traer un chiste de la api de chuck jokes", async () => {

@@ -1,16 +1,15 @@
-import app from "./index"; // Import the Express app
-import connectDb from "./db/connect"; // Import your DB connection function
+import app from "./index";
+import { connectDb } from "./db/connect";
 
 const PORT = process.env.PORT || 3005;
 
-// Connect to the database and start the server
 const start = async () => {
   try {
-    await connectDb(); // Connect to the database
-    console.log("Connected to the database");
+    await connectDb();
+    console.log("Connected to MongoDb");
 
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      console.log(`Server is running on port: ${PORT}`);
     });
   } catch (err) {
     console.error("Failed to start server:", err);
