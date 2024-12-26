@@ -34,6 +34,18 @@ export async function getChiste(req: Request, res: Response) {
       const data = await response.json();
 
       return res.status(200).json(data);
+    } else if (fuente === FuenteDelChiste.Propio) {
+      const chiste = await Chiste.findOne({}); // Trae un chiste de la db
+
+      // Si no hay chistes en la db
+      if (!chiste) {
+        return res.status(404).json({
+          message: "Sorry pana, no hay chistes",
+          success: false,
+        });
+      }
+
+      return res.status(200).json(chiste);
     }
 
     // Respuesta default (fuente desconocida)

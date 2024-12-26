@@ -37,4 +37,14 @@ describe("GET api/chistes?fuente=$parametro", () => {
     expect(response.body).toHaveProperty("joke");
     expect(response.body).toHaveProperty("status");
   });
+
+  it("GET api/chistes?fuente=propio Debería traer un chiste de la db", async () => {
+    const response = await request(app).get("/api/chistes?fuente=propio");
+
+    expect(response.status).toBe(200); // Espero que el estatus sea ok
+    // Expect propiedades
+    expect(response.body).toHaveProperty("_id");
+    expect(response.body).toHaveProperty("texto");
+    expect(response.body).toHaveProperty("categoria");
+  });
 });
