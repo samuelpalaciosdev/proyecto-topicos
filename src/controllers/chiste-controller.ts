@@ -23,7 +23,6 @@ export async function getChiste(req: Request, res: Response) {
     let chiste;
 
     // Según la fuente proporcionada en  /api/chistes?fuente=$param, consigue el chiste
-
     switch (fuente) {
       case FuenteDelChiste.Chuck:
         chiste = await fetchChisteChuckNorris();

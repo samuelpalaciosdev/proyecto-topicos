@@ -2,7 +2,6 @@ import "dotenv/config"; // Carga variables locales del .env
 
 import express from "express";
 import ChistesRouter from "./routes/chiste-routes";
-import connectDb from "./db/connect";
 
 const app = express();
 const PORT = process.env.PORT || 3005;

@@ -17,4 +17,8 @@ const connectDb = (): Promise<typeof mongoose> => {
   return mongoose.connect(MONGO_URI);
 };
 
-export default connectDb;
+const disconnectDb = () => {
+  return mongoose.connection.close();
+};
+
+export { connectDb, disconnectDb };
