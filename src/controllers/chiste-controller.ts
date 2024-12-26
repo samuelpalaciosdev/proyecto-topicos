@@ -24,9 +24,19 @@ export async function getChiste(req: Request, res: Response) {
       const data = await response.json();
 
       return res.status(200).json(data);
+    } else if (fuente === FuenteDelChiste.Dad) {
+      const response = await fetch("https://icanhazdadjoke.com", {
+        headers: {
+          Accept: "application/json", // Solo quiero el JSON
+        },
+      });
+
+      const data = await response.json();
+
+      return res.status(200).json(data);
     }
 
-    // Default response if the fuente is unrecognized
+    // Respuesta default (fuente desconocida)
     return res.status(400).json({
       mensaje:
         "Fuente no válida, debes especificar una fuente válida (chuck, dad, propio)",
