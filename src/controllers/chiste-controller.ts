@@ -3,6 +3,7 @@ import { fetch } from "undici";
 import { getChisteSchema } from "../validations/chiste-schema";
 import { FuenteDelChiste } from "../validations/enums";
 import Chiste from "../models/chiste-model";
+import { fetchChisteChuckNorris, fetchChisteDad } from "../services/services";
 
 export async function getChiste(req: Request, res: Response) {
   try {
@@ -19,41 +20,38 @@ export async function getChiste(req: Request, res: Response) {
       });
     }
 
-    if (fuente === FuenteDelChiste.Chuck) {
-      const response = await fetch("https://api.chucknorris.io/jokes/random");
-      const data = await response.json();
+    let chiste;
 
-      return res.status(200).json(data);
-    } else if (fuente === FuenteDelChiste.Dad) {
-      const response = await fetch("https://icanhazdadjoke.com", {
-        headers: {
-          Accept: "application/json", // Solo quiero el JSON
-        },
-      });
+    // Según la fuente proporcionada en  /api/chistes?fuente=$param, consigue el chiste
 
-      const data = await response.json();
+    switch (fuente) {
+      case FuenteDelChiste.Chuck:
+        chiste = await fetchChisteChuckNorris();
+        break;
+      case FuenteDelChiste.Dad:
+        chiste = await fetchChisteDad();
+        break;
+      case FuenteDelChiste.Propio:
+        chiste = await Chiste.findOne({}); // Trae un chiste de la db
 
-      return res.status(200).json(data);
-    } else if (fuente === FuenteDelChiste.Propio) {
-      const chiste = await Chiste.findOne({}); // Trae un chiste de la db
-
-      // Si no hay chistes en la db
-      if (!chiste) {
-        return res.status(404).json({
-          message: "Aún no hay chistes, cree uno!",
+        // Si no hay chistes en la db
+        if (!chiste) {
+          return res.status(404).json({
+            message: "Aún no hay chistes, cree uno!",
+            success: false,
+          });
+        }
+        break;
+      default:
+        return res.status(400).json({
+          mensaje:
+            "Fuente no válida, debes especificar una fuente válida (chuck, dad, propio)",
           success: false,
         });
-      }
-
-      return res.status(200).json(chiste);
     }
 
-    // Respuesta default (fuente desconocida)
-    return res.status(400).json({
-      mensaje:
-        "Fuente no válida, debes especificar una fuente válida (chuck, dad, propio)",
-      success: false,
-    });
+    // Retorna el chiste obtenido
+    return res.status(200).json(chiste);
   } catch (error) {
     console.error(error);
     return res.status(500).json({
