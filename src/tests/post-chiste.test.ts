@@ -24,6 +24,7 @@ describe("POST api/chistes", () => {
 
     expect(response.status).toBe(201); // Espero que el estatus sea creado
     // Expect propiedades esenciales
-    expect(response.body.texto).toBe(chiste.texto);
+    expect(response.body.chiste.puntaje).toBe(chiste.puntaje);
+    expect(response.body.chiste.texto).toBe(chiste.texto);
   });
 });
