@@ -40,7 +40,7 @@ export async function getChiste(req: Request, res: Response) {
       // Si no hay chistes en la db
       if (!chiste) {
         return res.status(404).json({
-          message: "Sorry pana, no hay chistes",
+          message: "Aún no hay chistes, cree uno!",
           success: false,
         });
       }
