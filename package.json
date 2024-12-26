@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc --build",
-    "dev": "nodemon ./src/index.ts",
+    "dev": "nodemon ./src/server.ts",
     "start": "nodemon",
     "test": "jest"
   },
