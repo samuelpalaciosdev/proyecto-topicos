@@ -1,15 +1,17 @@
 import { Request, Response } from "express";
-import { fetch } from "undici";
-import { getChisteSchema } from "../validations/chiste-schema";
+import { getChisteByFuenteSchema } from "../validations/chiste-schema";
 import { FuenteDelChiste } from "../validations/enums";
 import Chiste from "../models/chiste-model";
 import { fetchChisteChuckNorris, fetchChisteDad } from "../services/services";
 
-export async function getChiste(req: Request, res: Response) {
+// /api/chistes/fuente/:fuente
+export async function getChisteByFuente(req: Request, res: Response) {
   try {
-    const { fuente } = req.query;
+    const { fuente } = req.params;
 
-    const fuenteValida = getChisteSchema.safeParse(req);
+    const fuenteValida = getChisteByFuenteSchema.safeParse({
+      params: req.params,
+    });
 
     // Check si la fuente no es válida
     if (!fuente || !fuenteValida.success) {
@@ -22,7 +24,7 @@ export async function getChiste(req: Request, res: Response) {
 
     let chiste;
 
-    // Según la fuente proporcionada en  /api/chistes?fuente=$param, consigue el chiste
+    // Según la fuente proporcionada en  /api/chistes/fuente:fuente, consigue el chiste
     switch (fuente) {
       case FuenteDelChiste.Chuck:
         chiste = await fetchChisteChuckNorris();
@@ -31,7 +33,7 @@ export async function getChiste(req: Request, res: Response) {
         chiste = await fetchChisteDad();
         break;
       case FuenteDelChiste.Propio:
-        chiste = await Chiste.findOne({}); // Trae un chiste de la db
+        chiste = await Chiste.aggregate([{ $sample: { size: 1 } }]); // Trae un chiste random de la db
 
         // Si no hay chistes en la db
         if (!chiste) {
@@ -40,6 +42,8 @@ export async function getChiste(req: Request, res: Response) {
             success: false,
           });
         }
+
+        chiste = chiste[0]; // Aggregate retorna un array
         break;
       default:
         return res.status(400).json({
@@ -50,6 +54,7 @@ export async function getChiste(req: Request, res: Response) {
     }
 
     // Retorna el chiste obtenido
+
     return res.status(200).json(chiste);
   } catch (error) {
     console.error(error);

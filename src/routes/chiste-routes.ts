@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { getChiste } from "../controllers/chiste-controller";
+import { getChisteByFuente } from "../controllers/chiste-controller";
 
 const router = Router();
 
-router.get("/", getChiste);
+router.get("/fuente/:fuente", getChisteByFuente);
 
 export default router;

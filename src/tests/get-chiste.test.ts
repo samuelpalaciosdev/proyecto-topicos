@@ -3,7 +3,7 @@ import app from "../index";
 
 import { connectDb, disconnectDb } from "../db/connect";
 
-describe("GET api/chistes?fuente=$parametro", () => {
+describe("GET api/chistes/fuente/:fuente", () => {
   beforeAll(async () => {
     await connectDb();
   });
@@ -12,8 +12,8 @@ describe("GET api/chistes?fuente=$parametro", () => {
     await disconnectDb();
   });
 
-  it("GET api/chistes?fuente=chuck Debería traer un chiste de la api de chuck jokes", async () => {
-    const response = await request(app).get("/api/chistes?fuente=chuck");
+  it("GET api/chistes/fuente/chuck Debería traer un chiste de la api de chuck jokes", async () => {
+    const response = await request(app).get("/api/chistes/fuente/chuck");
 
     expect(response.status).toBe(200); // Espero que el estatus sea ok
     // Expect propiedades esenciales
@@ -22,8 +22,8 @@ describe("GET api/chistes?fuente=$parametro", () => {
     expect(response.body).toHaveProperty("url");
   });
 
-  it("GET api/chistes?fuente=dad Debería traer un chiste de la api de dad jokes", async () => {
-    const response = await request(app).get("/api/chistes?fuente=dad");
+  it("GET api/chistes/fuente/dad Debería traer un chiste de la api de dad jokes", async () => {
+    const response = await request(app).get("/api/chistes/fuente/dad");
 
     expect(response.status).toBe(200); // Espero que el estatus sea ok
     // Expect propiedades
@@ -32,8 +32,8 @@ describe("GET api/chistes?fuente=$parametro", () => {
     expect(response.body).toHaveProperty("status");
   });
 
-  it("GET api/chistes?fuente=propio Debería traer un chiste de la db", async () => {
-    const response = await request(app).get("/api/chistes?fuente=propio");
+  it("GET api/chistes/fuente/propio Debería traer un chiste de la db", async () => {
+    const response = await request(app).get("/api/chistes/fuente/propio");
 
     expect(response.status).toBe(200); // Espero que el estatus sea ok
     // Expect propiedades
