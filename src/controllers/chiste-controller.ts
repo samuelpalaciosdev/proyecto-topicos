@@ -10,7 +10,6 @@ import { FuenteDelChiste } from "../validations/enums";
 import Chiste from "../models/chiste-model";
 import { fetchChisteChuckNorris, fetchChisteDad } from "../services/services";
 
-
 // /api/chistes/fuente/:fuente
 export async function getChisteByFuente(req: Request, res: Response) {
   try {
@@ -115,48 +114,85 @@ export async function createChiste(req: Request, res: Response) {
 
 /**
  * @swagger
- * 3er Requerimiento: Put 
+ * 3er Requerimiento: Put
  * * Ya tiene un middleware que verifica los campos
  * * La idea es agarrar los datos del request, y reeemplazar únicamente los retribuidos por el usuario
  * query = Tiene el id buscado
- * body = tiene los datos retribuidos por el usuario 
- * 
+ * body = tiene los datos retribuidos por el usuario
+ *
  */
 
 export async function putChiste(req: Request, res: Response) {
   try {
     // Agarro los datos de una vez
-    const query = { _id: req.params.id }
-    const body = { $set: req.body }
-    
+    const query = { _id: req.params.id };
+    const body = { $set: req.body };
+
     // Check si el id es un id válido de la DB
-    if(!checkValidObjectId(query._id)) {
+    if (!checkValidObjectId(query._id)) {
       return res.status(400).json({
         mensaje: `Id no válido: ${query._id}`,
         success: false,
-      })
-    };
+      });
+    }
 
     const chiste = await Chiste.updateOne(query, body);
 
-    console.log("hola")
-
-    console.log(chiste)
- 
     return res.status(201).json({
       chiste,
       success: true,
-    })
-
-  } catch(err) {
+    });
+  } catch (err) {
     console.error(err);
     return res.status(500).json({
       mensaje: "Ocurrio un error al buscar",
       success: false,
-    })
+    });
   }
 }
 
+/**
+ * @swagger
+ * 4to Requerimiento: Delete por ID
+ *  Se busca el chiste por ID, si es conseguido, se elimina de la DB
+ */
+
+export async function deleteChisteById(req: Request, res: Response) {
+  try {
+    const query = { _id: req.params.id };
+
+    // Check si el id es un id válido de mongoose
+    if (!checkValidObjectId(query._id)) {
+      return res.status(400).json({
+        mensaje: `Id no válido: ${query._id}`,
+        success: false,
+      });
+    }
+
+    const result = await Chiste.deleteOne(query);
+
+    // Aqui vou a checkear si se borro en efecto
+    if (result.deletedCount === 1) {
+      return res.status(200).json({
+        message: "Chiste eliminado de la Base de Datos",
+        result,
+        success: true,
+      });
+    } else {
+      return res.status(400).json({
+        message: "No hubieron chistes encontrados con ese ID.",
+        result,
+        success: false,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      mensaje: "Ocurrio un error al intentar eliminar el chiste.",
+      success: false,
+    });
+  }
+}
 
 export async function getChisteById(req: Request, res: Response) {
   try {
@@ -189,12 +225,11 @@ export async function getChisteById(req: Request, res: Response) {
   }
 }
 
-
 // /api/chistes?puntaje=num
 export async function getChistesByPuntaje(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
     const { puntaje } = req.query;
@@ -235,4 +270,3 @@ export async function getChistesByPuntaje(
     });
   }
 }
-
