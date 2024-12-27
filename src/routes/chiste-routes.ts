@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { getChisteByFuente, putChiste } from '../controllers/chiste-controller';
-import { createChiste, getChisteById } from '../controllers/chiste-controller';
+import { getChisteByFuente } from '../controllers/chiste-controller';
+import { createChiste, getChisteById, putChiste } from '../controllers/chiste-controller';
 
 const router = Router();
 
