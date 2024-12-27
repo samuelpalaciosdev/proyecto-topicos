@@ -1,28 +1,30 @@
-import { Request, Response } from "express";
-import { checkValidObjectId } from "../utils/check-object-id";
-import { chisteSchema, getChisteSchema } from "../validations/chiste-schema";
-import { FuenteDelChiste } from "../validations/enums";
-import Chiste from "../models/chiste-model";
-import { fetchChisteChuckNorris, fetchChisteDad } from "../services/services";
+import { Request, Response } from 'express';
+import { checkValidObjectId } from '../utils/check-object-id';
+import { getChisteByFuenteSchema } from '../validations/chiste-schema';
+import { FuenteDelChiste } from '../validations/enums';
+import Chiste from '../models/chiste-model';
+import { fetchChisteChuckNorris, fetchChisteDad } from '../services/services';
 
-export async function getChiste(req: Request, res: Response) {
+// /api/chistes/fuente/:fuente
+export async function getChisteByFuente(req: Request, res: Response) {
   try {
-    const { fuente } = req.query;
+    const { fuente } = req.params;
 
-    const fuenteValida = getChisteSchema.safeParse(req);
+    const fuenteValida = getChisteByFuenteSchema.safeParse({
+      params: req.params,
+    });
 
     // Check si la fuente no es válida
     if (!fuente || !fuenteValida.success) {
       return res.status(400).json({
-        mensaje:
-          "Fuente no válida, debes especificar una fuente (chuck, dad, propio)",
+        mensaje: 'Fuente no válida, debes especificar una fuente (chuck, dad, propio)',
         success: false,
       });
     }
 
     let chiste;
 
-    // Según la fuente proporcionada en  /api/chistes?fuente=$param, consigue el chiste
+    // Según la fuente proporcionada en  /api/chistes/fuente:fuente, consigue el chiste
     switch (fuente) {
       case FuenteDelChiste.Chuck:
         chiste = await fetchChisteChuckNorris();
@@ -36,7 +38,7 @@ export async function getChiste(req: Request, res: Response) {
         // Si no hay chistes en la db
         if (!chiste) {
           return res.status(404).json({
-            message: "Aún no hay chistes, cree uno!",
+            message: 'Aún no hay chistes, cree uno!',
             success: false,
           });
         }
@@ -45,8 +47,7 @@ export async function getChiste(req: Request, res: Response) {
         break;
       default:
         return res.status(400).json({
-          mensaje:
-            "Fuente no válida, debes especificar una fuente válida (chuck, dad, propio)",
+          mensaje: 'Fuente no válida, debes especificar una fuente válida (chuck, dad, propio)',
           success: false,
         });
     }
@@ -57,7 +58,7 @@ export async function getChiste(req: Request, res: Response) {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      mensaje: "Ocurrió un error al buscar el chiste. Intenta nuevamente.",
+      mensaje: 'Ocurrió un error al buscar el chiste. Intenta nuevamente.',
       success: false,
     });
   }
@@ -65,16 +66,11 @@ export async function getChiste(req: Request, res: Response) {
 
 export async function createChiste(req: Request, res: Response) {
   try {
-    const {
-      texto,
-      autor = "Se perdió en el Ávila como Led",
-      puntaje,
-      categoria,
-    } = req.body;
+    const { texto, autor = 'Se perdió en el Ávila como Led', puntaje, categoria } = req.body;
 
     if (!texto || !puntaje || !categoria) {
       return res.status(400).send({
-        mensaje: "Por favor introduzca todos los campos requeridos",
+        mensaje: 'Por favor introduzca todos los campos requeridos',
         success: false,
       });
     }
@@ -84,7 +80,7 @@ export async function createChiste(req: Request, res: Response) {
     // Ref: hacer funcion de retorno de errores de zod especificando campo
     if (!dataValida.success) {
       return res.status(400).send({
-        mensaje: "Datos inválido, por favor intente de nuevo",
+        mensaje: 'Datos inválido, por favor intente de nuevo',
         success: false,
       });
     }
@@ -98,7 +94,7 @@ export async function createChiste(req: Request, res: Response) {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      mensaje: "Ocurrió un error al crear el chiste. Intenta nuevamente.",
+      mensaje: 'Ocurrió un error al crear el chiste. Intenta nuevamente.',
       success: false,
     });
   }
@@ -129,7 +125,7 @@ export async function getChisteById(req: Request, res: Response) {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      mensaje: "Ocurrió un error al buscar el chiste. Intenta nuevamente.",
+      mensaje: 'Ocurrió un error al buscar el chiste. Intenta nuevamente.',
       success: false,
     });
   }
