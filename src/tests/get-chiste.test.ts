@@ -2,6 +2,7 @@ import request from "supertest";
 import app from "../index";
 
 import { connectDb, disconnectDb } from "../db/connect";
+import Chiste from "../models/chiste-model";
 
 describe("GET api/chistes?fuente=$parametro", () => {
   beforeAll(async () => {
@@ -40,5 +41,34 @@ describe("GET api/chistes?fuente=$parametro", () => {
     expect(response.body).toHaveProperty("_id");
     expect(response.body).toHaveProperty("texto");
     expect(response.body).toHaveProperty("categoria");
+  });
+});
+
+describe("GET api/chistes/:id", () => {
+  beforeAll(async () => {
+    await connectDb();
+  });
+
+  afterAll(async () => {
+    await disconnectDb();
+  });
+
+  it("Debería traer el chiste con el respectivo id de la db", async () => {
+    // Trae el primer chiste de la db
+    const primerChiste = await Chiste.findOne({});
+    // Si no existe un chist en la db fail
+    if (!primerChiste) {
+      console.error(
+        "No hay chistes en la base de datos, por favor crea uno para pasar el test",
+      );
+      return;
+    }
+    const response = await request(app).get(`/api/chistes/${primerChiste._id}`);
+
+    expect(response.status).toBe(200); // Espero que el estatus sea ok
+    // Expect propiedades esenciales
+    expect(response.body).toHaveProperty("_id");
+    expect(response.body).toHaveProperty("texto");
+    expect(response.body).toHaveProperty("puntaje");
   });
 });
