@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { fetch } from "undici";
+import { checkValidObjectId } from "../utils/check-object-id";
 import { chisteSchema, getChisteSchema } from "../validations/chiste-schema";
 import { FuenteDelChiste } from "../validations/enums";
 import Chiste from "../models/chiste-model";
@@ -107,6 +107,14 @@ export async function createChiste(req: Request, res: Response) {
 export async function getChisteById(req: Request, res: Response) {
   try {
     const { id } = req.params;
+
+    // Check si el id es un id válido de mongoose
+    if (!checkValidObjectId(id)) {
+      return res.status(400).json({
+        mensaje: `Id no válido: ${id}`,
+        success: false,
+      });
+    }
 
     const chiste = await Chiste.findById(id);
 
