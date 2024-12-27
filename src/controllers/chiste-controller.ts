@@ -104,6 +104,8 @@ export async function createChiste(req: Request, res: Response) {
   }
 }
 
+
+
 export async function getChisteById(req: Request, res: Response) {
   try {
     const { id } = req.params;
