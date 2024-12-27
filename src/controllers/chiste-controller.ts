@@ -103,3 +103,26 @@ export async function createChiste(req: Request, res: Response) {
     });
   }
 }
+
+export async function getChisteById(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+
+    const chiste = await Chiste.findById(id);
+
+    if (!chiste) {
+      return res.status(404).send({
+        mensaje: `No hay chiste con el id: ${id}`,
+        success: false,
+      });
+    }
+
+    return res.status(200).json(chiste);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      mensaje: "Ocurrió un error al buscar el chiste. Intenta nuevamente.",
+      success: false,
+    });
+  }
+}
