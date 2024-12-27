@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { checkValidObjectId } from "../utils/check-object-id";
 import {
   chisteSchema,
   getChisteByFuenteSchema,
+  getChistesByPuntajeSchema,
 } from "../validations/chiste-schema";
 import { FuenteDelChiste } from "../validations/enums";
 import Chiste from "../models/chiste-model";
@@ -136,6 +137,52 @@ export async function getChisteById(req: Request, res: Response) {
     console.error(error);
     return res.status(500).json({
       mensaje: "Ocurrió un error al buscar el chiste. Intenta nuevamente.",
+      success: false,
+    });
+  }
+}
+
+// /api/chistes?puntaje=num
+export async function getChistesByPuntaje(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { puntaje } = req.query;
+
+    // Validar cuando pase el query de puntaje
+    if (puntaje) {
+      const puntajeValido = getChistesByPuntajeSchema.safeParse({
+        query: req.query,
+      });
+
+      if (!puntajeValido.success) {
+        return res.status(400).json({
+          mensaje: "Puntaje no válido, debe ser del 1 al 10",
+          success: false,
+        });
+      }
+
+      const chistes = await Chiste.find({ puntaje });
+
+      // Check si no hay chistes con el puntaje dado
+      if (chistes.length === 0) {
+        return res.status(404).json({
+          mensaje: `No se encontraron chistes con el puntaje: ${puntaje}`,
+          success: false,
+        });
+      }
+
+      return res.status(200).json(chistes);
+    }
+
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      mensaje:
+        "Ocurrió un error al buscar chistes con el puntaje dado. Intenta nuevamente.",
       success: false,
     });
   }

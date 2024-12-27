@@ -9,6 +9,13 @@ export const getChisteByFuenteSchema = z.object({
   }),
 });
 
+// Schema del request del endpoint api/chistes?puntaje=num
+export const getChistesByPuntajeSchema = z.object({
+  query: z.object({
+    puntaje: z.coerce.number().min(1).max(10),
+  }),
+});
+
 export const chisteSchema = z.object({
   texto: z
     .string()
