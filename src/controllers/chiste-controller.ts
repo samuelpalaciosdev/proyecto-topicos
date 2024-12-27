@@ -110,6 +110,26 @@ export async function createChiste(req: Request, res: Response) {
   }
 }
 
+/**
+ * @swagger
+ * 3er Requerimiento: Put 
+ */
+
+export async function putChiste(req: Request, res: Response) {
+  try {
+    const {
+      body,
+      params: { id },
+    } = req;
+
+    console.log('HOLAAAAA');
+
+
+    console.log(body, id);
+  } catch(err) {
+    console.log(err);
+  }
+}
 
 
 export async function getChisteById(req: Request, res: Response) {
@@ -133,6 +153,8 @@ export async function getChisteById(req: Request, res: Response) {
       });
     }
 
+    console.log('HOLAAAAA');
+
     return res.status(200).json(chiste);
   } catch (error) {
     console.error(error);
@@ -142,3 +164,5 @@ export async function getChisteById(req: Request, res: Response) {
     });
   }
 }
+
+ 
