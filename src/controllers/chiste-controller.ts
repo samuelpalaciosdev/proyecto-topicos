@@ -1,15 +1,21 @@
 import { Request, Response } from "express";
 import { checkValidObjectId } from "../utils/check-object-id";
-import { chisteSchema, getChisteSchema } from "../validations/chiste-schema";
+import {
+  chisteSchema,
+  getChisteByFuenteSchema,
+} from "../validations/chiste-schema";
 import { FuenteDelChiste } from "../validations/enums";
 import Chiste from "../models/chiste-model";
 import { fetchChisteChuckNorris, fetchChisteDad } from "../services/services";
 
-export async function getChiste(req: Request, res: Response) {
+// /api/chistes/fuente/:fuente
+export async function getChisteByFuente(req: Request, res: Response) {
   try {
-    const { fuente } = req.query;
+    const { fuente } = req.params;
 
-    const fuenteValida = getChisteSchema.safeParse(req);
+    const fuenteValida = getChisteByFuenteSchema.safeParse({
+      params: req.params,
+    });
 
     // Check si la fuente no es válida
     if (!fuente || !fuenteValida.success) {
@@ -22,7 +28,7 @@ export async function getChiste(req: Request, res: Response) {
 
     let chiste;
 
-    // Según la fuente proporcionada en  /api/chistes?fuente=$param, consigue el chiste
+    // Según la fuente proporcionada en  /api/chistes/fuente:fuente, consigue el chiste
     switch (fuente) {
       case FuenteDelChiste.Chuck:
         chiste = await fetchChisteChuckNorris();
