@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { checkValidObjectId } from "../utils/check-object-id";
 import {
   chisteSchema,
+  ChisteType,
   getChisteByFuenteSchema,
 } from "../validations/chiste-schema";
 import { FuenteDelChiste } from "../validations/enums";
@@ -114,9 +115,11 @@ export async function createChiste(req: Request, res: Response) {
 /**
  * @swagger
  * 3er Requerimiento: Put 
- * La idea es agarrar los datos del request, y reeemplazar únicamente los retribuidos por el usuario
+ * * Ya tiene un middleware que verifica los campos
+ * * La idea es agarrar los datos del request, y reeemplazar únicamente los retribuidos por el usuario
  * query = Tiene el id buscado
  * body = tiene los datos retribuidos por el usuario 
+ * 
  */
 
 export async function putChiste(req: Request, res: Response) {
@@ -134,6 +137,8 @@ export async function putChiste(req: Request, res: Response) {
     };
 
     const chiste = await Chiste.updateOne(query, body);
+
+    console.log("hola")
 
     console.log(chiste)
  
