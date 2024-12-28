@@ -16,6 +16,8 @@ import { fetchChisteChuckNorris, fetchChisteDad } from "../services/services";
  *  0 Get: Obtener Todos los chistes de la DB
  */
 
+// Hey
+
 export async function getChistes(req: Request, res: Response) {
   try {
     const chistes = await Chiste.find();
