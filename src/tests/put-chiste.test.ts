@@ -1,49 +1,58 @@
 import request from "supertest";
 import app from "../index";
-import Chiste from "../models/chiste-model";
 
 import { connectDb, disconnectDb } from "../db/connect";
+import { ChisteType } from "../validations/chiste-schema";
 
 describe("PUT api/chistes/:id", () => {
-  beforeAll(async () => {
-    await connectDb();
-  });
+    let chisteID: string;
 
-  afterAll(async () => {
-    await disconnectDb();
-  });
+    beforeAll(async () => {
+        await connectDb();
 
-  it("Debería modificar un chiste en la DB", async () => {
-    // Traigo el primer chiste
-    const primerChiste = await Chiste.findOne({});
+        const testChiste: ChisteType = {
+          texto: "Un chiste de prueba para PUT",
+          autor: "Prueba Inicial",
+          puntaje: 5,
+          categoria: "dad joke",
+        };
 
-    if (!primerChiste) {
-      console.error("No hay chistes disponibles en la DB.");
-      return;
-    }
+        const response = await request(app).post("/api/chistes").send(testChiste);
+        chisteID = response.body._id;
+      });
+    
+      afterAll(async () => {
+        await disconnectDb();
+      });
 
-    const testChiste = {
-      id: primerChiste._id,
-      texto: "Un chiste de prueba para PUTTT",
-      autor: "Prueba Inicial",
-      puntaje: 5,
-      categoria: "dad joke",
-    };
+      it("Debería modificar un chiste en la DB", async () => {
+        const chisteModificado: Partial<ChisteType> = {
+          texto: "Un pana, con 2 panas, un tercer pana, wao 3 panas",
+          autor: "Rafael",
+          puntaje: 3,
+          categoria: "dad joke",
+        };
 
-    const response = await request(app)
-      .put(`/api/chistes/${primerChiste._id}`)
-      .send(testChiste);
 
-    expect(response.status).toBe(201);
-    // Mensaje de retorno
-    expect(response.body).toEqual(
-      expect.objectContaining({
-        success: true,
-        chiste: expect.objectContaining({
-          acknowledged: true,
-          modifiedCount: expect.any(Number),
-        }),
+        const response = await request(app)
+          .put(`api/chistes/${chisteID}`)
+          .send(chisteModificado);
+
+        expect(response.status).toBe(201);
+        expect(response.body).toEqual(
+          expect.objectContaining({
+            acknowledged: true,
+            modifiedCount: 1,
+          })
+        );
+
+        const verifyResp = await request(app).get(`/api/chistes/${chisteID}`);
+        expect(verifyResp.body).toEqual(
+          expect.objectContaining({
+            _id: chisteID,
+            ...chisteModificado,
+          })
+        );
+
       })
-    );
-  });
-});
+})

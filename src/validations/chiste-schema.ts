@@ -1,18 +1,11 @@
 import { z } from "zod";
 
-import { CategoriaChiste, FuenteDelChiste } from "./enums";
+import { FuenteDelChiste } from "./enums";
 
 // Schema del request del endpoint api/chistes/fuente/:fuente
 export const getChisteByFuenteSchema = z.object({
   params: z.object({
     fuente: z.nativeEnum(FuenteDelChiste),
-  }),
-});
-
-// Schema de los chistes por su Categoria
-export const getChistesByCategoriaSchema = z.object({
-  query: z.object({
-    categoria: z.nativeEnum(CategoriaChiste),
   }),
 });
 
@@ -40,7 +33,7 @@ export const chisteSchema = z.object({
   categoria: z
     .enum(["dad joke", "humor negro", "chistoso", "malo"])
     .describe(
-      "Categoría inválida, debe ser: Dad joke, Humor Negro, Chistoso o Malo"
+      "Categoría inválida, debe ser: Dad joke, Humor Negro, Chistoso o Malo",
     ),
 });
 
