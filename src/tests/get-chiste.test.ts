@@ -83,6 +83,17 @@ describe("GET api/chistes/:id", () => {
 });
 
 /**
+ * @swagger
+ *  6to Get: Obtener cantidad de chistes por su Categoria
+ */
+
+describe("GET api/chistes?fuente=$categoria", () => {
+  beforeAll(async () => {
+    await connectDb();
+  });
+});
+
+/**
  *  7 Get: Puntuaje
  */
 
