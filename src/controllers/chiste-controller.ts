@@ -4,11 +4,40 @@ import {
   chisteSchema,
   ChisteType,
   getChisteByFuenteSchema,
+  getChistesByCategoriaSchema,
   getChistesByPuntajeSchema,
 } from "../validations/chiste-schema";
-import { FuenteDelChiste } from "../validations/enums";
+import { CategoriaChiste, FuenteDelChiste } from "../validations/enums";
 import Chiste from "../models/chiste-model";
 import { fetchChisteChuckNorris, fetchChisteDad } from "../services/services";
+
+/**
+ * @swagger
+ *  0 Get: Obtener Todos los chistes de la DB
+ */
+
+export async function getChistes(req: Request, res: Response) {
+  try {
+    const chistes = await Chiste.find();
+    if (chistes.length === 0) {
+      return res.status(404).json({
+        message: "No se encontraron chistes",
+        success: false,
+      });
+    }
+
+    res.status(200).json(chistes);
+  } catch (err) {
+    res.status(500).json({
+      error: "Error al obtener los chistes.",
+    });
+  }
+}
+
+/**
+ * @swagger
+ *  1er Get: Obtener Chiste por parámetro URL
+ */
 
 // /api/chistes/fuente/:fuente
 export async function getChisteByFuente(req: Request, res: Response) {
@@ -70,6 +99,11 @@ export async function getChisteByFuente(req: Request, res: Response) {
     });
   }
 }
+
+/**
+ * @swagger
+ *  2do POST: Postear un Chiste
+ */
 
 export async function createChiste(req: Request, res: Response) {
   try {
@@ -194,6 +228,11 @@ export async function deleteChisteById(req: Request, res: Response) {
   }
 }
 
+/**
+ * @swagger
+ *  5to Get: Obtener Chiste por ID
+ */
+
 export async function getChisteById(req: Request, res: Response) {
   try {
     const { id } = req.params;
@@ -224,6 +263,54 @@ export async function getChisteById(req: Request, res: Response) {
     });
   }
 }
+/**
+ * @swagger
+ *  6to Get: Obtener cantidad de chistes por su Categoria
+ */
+
+export async function getChisteCategoria(req: Request, res: Response) {
+  try {
+    const { categoria } = req.query;
+
+    // Validar la categoria
+    if (categoria) {
+      const categoriaValida = getChistesByCategoriaSchema.safeParse({
+        query: req.query,
+      });
+
+      if (!categoriaValida.success) {
+        return res.status(400).json({
+          mensaje: "Categoria no válida.",
+          success: true,
+        });
+      }
+
+      const chistesCategoria = await Chiste.find({ categoria });
+
+      if (chistesCategoria.length === 0) {
+        return res.status(404).json({
+          mensaje: "No hay chistes que tengan esta categoria en la DB.",
+          success: false,
+        });
+      }
+
+      return res.status(200).json({
+        chistesCategoria,
+        cantidad: chistesCategoria.length,
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      mensaje: `Ocurrio un error al buscar los chistes por categoria: ${err}`,
+      success: false,
+    });
+  }
+}
+
+/**
+ * @swagger
+ *  7 Get: Obtener chiste por puntuaje
+ */
 
 // /api/chistes?puntaje=num
 export async function getChistesByPuntaje(

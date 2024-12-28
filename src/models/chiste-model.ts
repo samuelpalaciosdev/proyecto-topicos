@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { CategoriaChiste } from "../validations/enums";
 
 const chisteSchema = new mongoose.Schema({
   // El id lo genera automáticamente mongodb
@@ -27,7 +28,12 @@ const chisteSchema = new mongoose.Schema({
     type: String,
     required: [true, "Por favor indica la categoría del chiste"],
     enum: {
-      values: ["dad joke", "humor Negro", "chistoso", "malo"], // Las pongo en minúscula porque es case sensitive la validación
+      values: [
+        CategoriaChiste.DadJoke,
+        CategoriaChiste.HumorNegro,
+        CategoriaChiste.Chistoso,
+        CategoriaChiste.Malo,
+      ], // Las pongo en minúscula porque es case sensitive la validación
       message:
         "Categoría inválida, debe ser: Dad joke, Humor Negro, Chistoso o Malo",
     },
