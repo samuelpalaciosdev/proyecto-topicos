@@ -58,7 +58,7 @@ describe("GET api/chistes/:id", () => {
     // Si no existe un chist en la db fail
     if (!primerChiste) {
       console.error(
-        "No hay chistes en la base de datos, por favor crea uno para pasar el test",
+        "No hay chistes en la base de datos, por favor crea uno para pasar el test"
       );
       return;
     }
@@ -84,7 +84,7 @@ describe("GET api/chistes?puntaje=$num", () => {
   it("Debería traer todos los chistes con cierto puntaje de la db", async () => {
     const puntajeNum = 6;
     const response = await request(app).get(
-      `/api/chistes?puntaje=${puntajeNum}`,
+      `/api/chistes?puntaje=${puntajeNum}`
     );
 
     expect(response.status).toBe(200); // Espero que el estatus sea ok
