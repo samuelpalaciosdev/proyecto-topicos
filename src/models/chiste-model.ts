@@ -27,7 +27,7 @@ const chisteSchema = new mongoose.Schema({
     type: String,
     required: [true, "Por favor indica la categoría del chiste"],
     enum: {
-      values: ["dad joke", "humor Negro", "chistoso", "malo"], // Las pongo en minúscula porque es case sensitive la validación
+      values: ["dad joke", "humor negro", "chistoso", "malo"], // Las pongo en minúscula porque es case sensitive la validación
       message:
         "Categoría inválida, debe ser: Dad joke, Humor Negro, Chistoso o Malo",
     },

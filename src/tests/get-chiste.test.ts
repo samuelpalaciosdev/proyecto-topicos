@@ -98,14 +98,36 @@ describe("GET api/chistes?categoria=$categoria", () => {
 
   // Dad
   it("GET api/chistes/categoria=dad%20joke Debería traer la cantidad de chistes que hay en Dad", async () => {
+    const categoria = `dad%20joke`;
     const response = await request(app).get(
-      "/api/chistes?categoria=dad%20joke"
+      `/api/chistes?categoria=${categoria}`
     );
 
     expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array); // Debería traerme un array
   });
-  // Chuck
-  // Propio
+
+  // Humor Negro
+  it("GET api/chistes/categoria=humor%20negro Debería traer la cantidad de chistes que hay en Dad", async () => {
+    const categoria = `humor%20negro`;
+    const response = await request(app).get(
+      `/api/chistes?categoria=${categoria}`
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array); // Debería traerme un array
+  });
+
+  // Chistoso
+  it("GET api/chistes/categoria=chistoso Debería traer la cantidad de chistes que hay en Dad", async () => {
+    const categoria = `chistoso`;
+    const response = await request(app).get(
+      `/api/chistes?categoria=${categoria}`
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toBeInstanceOf(Array); // Debería traerme un array
+  });
 });
 
 /**
@@ -122,7 +144,7 @@ describe("GET api/chistes?puntaje=$num", () => {
   });
 
   it("Debería traer todos los chistes con cierto puntaje de la db", async () => {
-    const puntajeNum = 6;
+    const puntajeNum = 5;
     const response = await request(app).get(
       `/api/chistes?puntaje=${puntajeNum}`
     );
