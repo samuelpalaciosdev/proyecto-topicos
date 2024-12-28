@@ -1,23 +1,18 @@
 import "dotenv/config";
-import express from "express";
-import path from "path";
+import cors from "cors";
 import { connectDb } from "./db/connect";
 import { swaggerDocs } from "./utils/swagger-ui";
 import app from "./index";
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3005;
 
-app.use(express.static(path.join(__dirname, "../frontend/.next")));
-app.use(express.static(path.join(__dirname, "../frontend/public")));
-
-app.get("*", (req, res) => {
-  if (req.url.startsWith("/api/")) {
-    return;
-  }
-  res.sendFile(
-    path.join(__dirname, "../frontend/.next/server/pages/index.html")
-  );
-});
+// Enable CORS
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000", // Frontend URL
+    credentials: true,
+  })
+);
 
 const start = async () => {
   try {
@@ -28,7 +23,7 @@ const start = async () => {
       console.log(`Server is running on port: ${PORT}`);
       swaggerDocs(app);
       console.log(`Docs available at http://localhost:${PORT}/api/docs`);
-      console.log(`Frontend available at http://localhost:${PORT}`);
+      console.log(`Frontend available at http://localhost:${3000}`);
     });
   } catch (err) {
     console.error("Failed to start server:", err);

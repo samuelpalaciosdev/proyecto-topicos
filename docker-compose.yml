@@ -22,9 +22,16 @@ services:
       - topicos_net_test
     volumes:
       - .:/usr/src/app
-      # - ./frontend/.next:/app/frontend/.next
-      # - ./frontend/public:/app/frontend/public
-      - /app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend # Ensure this matches the folder for your frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - web
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3005/api
 
   mongo:
     container_name: mongo_topicos
