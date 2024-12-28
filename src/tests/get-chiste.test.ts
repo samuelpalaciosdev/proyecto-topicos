@@ -104,7 +104,12 @@ describe("GET api/chistes?categoria=$categoria", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array); // Debería traerme un array
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        chistesCategoria: expect.any(Array),
+        cantidad: expect.any(Number),
+      })
+    ); // Debería traerme un array
   });
 
   // Humor Negro
@@ -115,7 +120,12 @@ describe("GET api/chistes?categoria=$categoria", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array); // Debería traerme un array
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        chistesCategoria: expect.any(Array),
+        cantidad: expect.any(Number),
+      })
+    ); // Debería traerme un array
   });
 
   // Chistoso
@@ -126,7 +136,12 @@ describe("GET api/chistes?categoria=$categoria", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array); // Debería traerme un array
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        chistesCategoria: expect.any(Array),
+        cantidad: expect.any(Number),
+      })
+    ); // Debería traerme un array
   });
 });
 

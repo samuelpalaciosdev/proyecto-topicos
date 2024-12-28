@@ -4,9 +4,10 @@ import {
   chisteSchema,
   ChisteType,
   getChisteByFuenteSchema,
+  getChistesByCategoriaSchema,
   getChistesByPuntajeSchema,
 } from "../validations/chiste-schema";
-import { FuenteDelChiste } from "../validations/enums";
+import { CategoriaChiste, FuenteDelChiste } from "../validations/enums";
 import Chiste from "../models/chiste-model";
 import { fetchChisteChuckNorris, fetchChisteDad } from "../services/services";
 
@@ -267,7 +268,44 @@ export async function getChisteById(req: Request, res: Response) {
  *  6to Get: Obtener cantidad de chistes por su Categoria
  */
 
-export async function getChisteCategoria(req: Request, res: Response) {}
+export async function getChisteCategoria(req: Request, res: Response) {
+  try {
+    const { categoria } = req.query;
+
+    // Validar la categoria
+    if (categoria) {
+      const categoriaValida = getChistesByCategoriaSchema.safeParse({
+        query: req.query,
+      });
+
+      if (!categoriaValida.success) {
+        return res.status(400).json({
+          mensaje: "Categoria no válida.",
+          success: true,
+        });
+      }
+
+      const chistesCategoria = await Chiste.find({ categoria });
+
+      if (chistesCategoria.length === 0) {
+        return res.status(404).json({
+          mensaje: "No hay chistes que tengan esta categoria en la DB.",
+          success: false,
+        });
+      }
+
+      return res.status(200).json({
+        chistesCategoria,
+        cantidad: chistesCategoria.length,
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      mensaje: `Ocurrio un error al buscar los chistes por categoria: ${err}`,
+      success: false,
+    });
+  }
+}
 
 /**
  * @swagger
