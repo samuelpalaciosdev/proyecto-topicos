@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { checkValidObjectId } from "../utils/check-object-id";
 import {
   chisteSchema,
@@ -22,9 +22,11 @@ export async function getChistes(req: Request, res: Response) {
     }
 
     res.status(200).json(chistes);
-  } catch (err) {
-    res.status(500).json({
-      error: "Error al obtener los chistes.",
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Ocurrió un error al buscar los chistes. Intenta nuevamente.",
+      success: false,
     });
   }
 }
@@ -41,7 +43,7 @@ export async function getChisteByFuente(req: Request, res: Response) {
     // Check si la fuente no es válida
     if (!fuente || !fuenteValida.success) {
       return res.status(400).json({
-        mensaje:
+        message:
           "Fuente no válida, debes especificar una fuente (chuck, dad, propio)",
         success: false,
       });
@@ -72,7 +74,7 @@ export async function getChisteByFuente(req: Request, res: Response) {
         break;
       default:
         return res.status(400).json({
-          mensaje:
+          message:
             "Fuente no válida, debes especificar una fuente válida (chuck, dad, propio)",
           success: false,
         });
@@ -83,7 +85,7 @@ export async function getChisteByFuente(req: Request, res: Response) {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      mensaje: "Ocurrió un error al buscar el chiste. Intenta nuevamente.",
+      message: "Ocurrió un error al buscar el chiste",
       success: false,
     });
   }
@@ -102,7 +104,7 @@ export async function createChiste(req: Request, res: Response) {
 
     if (!texto || !puntaje || !categoria) {
       return res.status(400).send({
-        mensaje: "Por favor introduzca todos los campos requeridos",
+        message: "Por favor introduzca todos los campos requeridos",
         success: false,
       });
     }
@@ -112,7 +114,7 @@ export async function createChiste(req: Request, res: Response) {
     // Ref: hacer funcion de retorno de errores de zod especificando campo
     if (!dataValida.success) {
       return res.status(400).send({
-        mensaje: "Datos inválido, por favor intente de nuevo",
+        message: "Datos inválido, por favor intente de nuevo",
         success: false,
       });
     }
@@ -126,7 +128,7 @@ export async function createChiste(req: Request, res: Response) {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      mensaje: "Ocurrió un error al crear el chiste. Intenta nuevamente.",
+      message: "Ocurrió un error al crear el chiste",
       success: false,
     });
   }
@@ -145,7 +147,7 @@ export async function putChiste(req: Request, res: Response) {
     // Check si el id es un id válido de mongoose
     if (!checkValidObjectId(query._id)) {
       return res.status(400).json({
-        mensaje: `Id no válido: ${query._id}`,
+        message: `Id no válido: ${query._id}`,
         success: false,
       });
     }
@@ -159,7 +161,7 @@ export async function putChiste(req: Request, res: Response) {
   } catch (err) {
     console.error(err);
     return res.status(500).json({
-      mensaje: "Ocurrio un error al buscar",
+      message: "Ocurrió un error al intentar actualizar el chiste",
       success: false,
     });
   }
@@ -173,14 +175,14 @@ export async function deleteChisteById(req: Request, res: Response) {
     // Check si el id es un id válido de mongoose
     if (!checkValidObjectId(query._id)) {
       return res.status(400).json({
-        mensaje: `Id no válido: ${query._id}`,
+        message: `Id no válido: ${query._id}`,
         success: false,
       });
     }
 
     const result = await Chiste.deleteOne(query);
 
-    // Check si se boró efectivamente
+    // Check si se borró efectivamente
     if (result.deletedCount === 1) {
       return res.status(200).json({
         message: "Chiste eliminado de la Base de Datos",
@@ -197,7 +199,7 @@ export async function deleteChisteById(req: Request, res: Response) {
   } catch (err) {
     console.error(err);
     return res.status(500).json({
-      mensaje: "Ocurrio un error al intentar eliminar el chiste.",
+      message: "Ocurrió un error al eliminar el chiste",
       success: false,
     });
   }
@@ -211,7 +213,7 @@ export async function getChisteById(req: Request, res: Response) {
     // Check si el id es un id válido de mongoose
     if (!checkValidObjectId(id)) {
       return res.status(400).json({
-        mensaje: `Id no válido: ${id}`,
+        message: `Id no válido: ${id}`,
         success: false,
       });
     }
@@ -220,7 +222,7 @@ export async function getChisteById(req: Request, res: Response) {
 
     if (!chiste) {
       return res.status(404).send({
-        mensaje: `No hay chiste con el id: ${id}`,
+        message: `No hay chiste con el id: ${id}`,
         success: false,
       });
     }
@@ -229,18 +231,14 @@ export async function getChisteById(req: Request, res: Response) {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      mensaje: "Ocurrió un error al buscar el chiste. Intenta nuevamente.",
+      message: "Ocurrió un error al buscar el chiste",
       success: false,
     });
   }
 }
 
 // 6. Get chistes de la db por categoria y su cantidad - /api/chistes?puntaje=num
-export async function getChistesByPuntaje(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export async function getChistesByPuntaje(req: Request, res: Response) {
   try {
     const { puntaje } = req.query;
 
@@ -252,7 +250,7 @@ export async function getChistesByPuntaje(
 
       if (!puntajeValido.success) {
         return res.status(400).json({
-          mensaje: "Puntaje no válido, debe ser del 1 al 10",
+          message: "Puntaje no válido, debe ser del 1 al 10",
           success: false,
         });
       }
@@ -262,20 +260,17 @@ export async function getChistesByPuntaje(
       // Check si no hay chistes con el puntaje dado
       if (chistes.length === 0) {
         return res.status(404).json({
-          mensaje: `No se encontraron chistes con el puntaje: ${puntaje}`,
+          message: `No se encontraron chistes con el puntaje: ${puntaje}`,
           success: false,
         });
       }
 
       return res.status(200).json(chistes);
     }
-
-    // next(); // Llama al siguiente controlador (getChisteById) para que de el error de id no conocido
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      mensaje:
-        "Ocurrió un error al buscar chistes con el puntaje dado. Intenta nuevamente.",
+      message: "Ocurrió un error al buscar chistes con el puntaje dado",
       success: false,
     });
   }
@@ -294,7 +289,7 @@ export async function getChistesByCategoria(req: Request, res: Response) {
 
       if (!categoriaValida.success) {
         return res.status(400).json({
-          mensaje: "Categoria no válida.",
+          message: "Categoria no válida.",
           success: true,
         });
       }
@@ -303,7 +298,7 @@ export async function getChistesByCategoria(req: Request, res: Response) {
 
       if (chistesCategoria.length === 0) {
         return res.status(404).json({
-          mensaje: "No hay chistes que tengan esta categoria en la DB.",
+          message: "No hay chistes que tengan esta categoria en la DB.",
           success: false,
         });
       }
@@ -315,7 +310,7 @@ export async function getChistesByCategoria(req: Request, res: Response) {
     }
   } catch (err) {
     return res.status(500).json({
-      mensaje: `Ocurrio un error al buscar los chistes por categoria: ${err}`,
+      message: "Ocurrió un error al buscar chistes con la categoría dada",
       success: false,
     });
   }

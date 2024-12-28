@@ -16,22 +16,18 @@ export const validation =
     } catch (err) {
       console.error(err);
       return res.status(400).json({
-        mensaje: "Por favor, verifica los datos e intenta nuevamente",
+        message: "Por favor, verifica los datos e intenta nuevamente",
       });
     }
   };
 
 // Dependiendo del query en api/chistes?$query llama a su controlador
-export function queryGetHandler(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+export function queryGetHandler(req: Request, res: Response) {
   const { puntaje, categoria } = req.query;
 
   // Handle Query for Puntaje
   if (puntaje) {
-    return getChistesByPuntaje(req, res, next);
+    return getChistesByPuntaje(req, res);
   }
 
   if (categoria) {
