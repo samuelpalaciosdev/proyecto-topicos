@@ -3,6 +3,11 @@ import app from "../index";
 import { connectDb, disconnectDb } from "../db/connect";
 import Chiste from "../models/chiste-model";
 
+/**
+ * @swagger
+ *  1er Get: Obtener Chiste por parámetro URL
+ */
+
 describe("GET api/chistes/fuente/:fuente", () => {
   beforeAll(async () => {
     await connectDb();
@@ -43,6 +48,11 @@ describe("GET api/chistes/fuente/:fuente", () => {
   });
 });
 
+/**
+ * @swagger
+ *  5to Get: Obtener Chiste por ID
+ */
+
 describe("GET api/chistes/:id", () => {
   beforeAll(async () => {
     await connectDb();
@@ -71,6 +81,10 @@ describe("GET api/chistes/:id", () => {
     expect(response.body).toHaveProperty("puntaje");
   });
 });
+
+/**
+ *  7 Get: Puntuaje
+ */
 
 describe("GET api/chistes?puntaje=$num", () => {
   beforeAll(async () => {

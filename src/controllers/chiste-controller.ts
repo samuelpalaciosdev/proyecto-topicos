@@ -10,6 +10,11 @@ import { FuenteDelChiste } from "../validations/enums";
 import Chiste from "../models/chiste-model";
 import { fetchChisteChuckNorris, fetchChisteDad } from "../services/services";
 
+/**
+ * @swagger
+ *  1er Get: Obtener Chiste por parámetro URL
+ */
+
 // /api/chistes/fuente/:fuente
 export async function getChisteByFuente(req: Request, res: Response) {
   try {
@@ -70,6 +75,11 @@ export async function getChisteByFuente(req: Request, res: Response) {
     });
   }
 }
+
+/**
+ * @swagger
+ *  2do POST: Postear un Chiste
+ */
 
 export async function createChiste(req: Request, res: Response) {
   try {
@@ -194,6 +204,11 @@ export async function deleteChisteById(req: Request, res: Response) {
   }
 }
 
+/**
+ * @swagger
+ *  5to Get: Obtener Chiste por ID
+ */
+
 export async function getChisteById(req: Request, res: Response) {
   try {
     const { id } = req.params;
@@ -224,6 +239,17 @@ export async function getChisteById(req: Request, res: Response) {
     });
   }
 }
+/**
+ * @swagger
+ *  6to Get: Obtener cantidad de chistes por su Categoria
+ */
+
+export async function getChisteCategoria(req: Request, res: Response) {}
+
+/**
+ * @swagger
+ *  7 Get: Obtener chiste por puntuaje
+ */
 
 // /api/chistes?puntaje=num
 export async function getChistesByPuntaje(
