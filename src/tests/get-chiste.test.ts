@@ -159,7 +159,7 @@ describe("GET api/chistes?puntaje=$num", () => {
   });
 
   it("Debería traer todos los chistes con cierto puntaje de la db", async () => {
-    const puntajeNum = 5;
+    const puntajeNum = 3;
     const response = await request(app).get(
       `/api/chistes?puntaje=${puntajeNum}`
     );
