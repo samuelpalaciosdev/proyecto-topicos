@@ -87,10 +87,25 @@ describe("GET api/chistes/:id", () => {
  *  6to Get: Obtener cantidad de chistes por su Categoria
  */
 
-describe("GET api/chistes?fuente=$categoria", () => {
+describe("GET api/chistes?categoria=$categoria", () => {
   beforeAll(async () => {
     await connectDb();
   });
+
+  afterAll(async () => {
+    await disconnectDb();
+  });
+
+  // Dad
+  it("GET api/chistes/categoria=dad%20joke Debería traer la cantidad de chistes que hay en Dad", async () => {
+    const response = await request(app).get(
+      "/api/chistes?categoria=dad%20joke"
+    );
+
+    expect(response.status).toBe(200);
+  });
+  // Chuck
+  // Propio
 });
 
 /**
