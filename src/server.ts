@@ -1,8 +1,23 @@
-import app from "./index";
+import "dotenv/config";
+import express from "express";
+import path from "path";
 import { connectDb } from "./db/connect";
 import { swaggerDocs } from "./utils/swagger-ui";
+import app from "./index";
 
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 5000;
+
+app.use(express.static(path.join(__dirname, "../frontend/.next")));
+app.use(express.static(path.join(__dirname, "../frontend/public")));
+
+app.get("*", (req, res) => {
+  if (req.url.startsWith("/api/")) {
+    return;
+  }
+  res.sendFile(
+    path.join(__dirname, "../frontend/.next/server/pages/index.html")
+  );
+});
 
 const start = async () => {
   try {
@@ -11,16 +26,13 @@ const start = async () => {
 
     app.listen(PORT, () => {
       console.log(`Server is running on port: ${PORT}`);
-
       swaggerDocs(app);
-      // REF: quitar port forwarding docker
-      console.log(
-        `Docs de la api disponibles en http://localhost:${PORT}/api/docs`,
-      );
+      console.log(`Docs available at http://localhost:${PORT}/api/docs`);
+      console.log(`Frontend available at http://localhost:${PORT}`);
     });
   } catch (err) {
     console.error("Failed to start server:", err);
-    process.exit(1); // Cerrar
+    process.exit(1);
   }
 };
 

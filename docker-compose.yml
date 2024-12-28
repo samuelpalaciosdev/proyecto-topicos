@@ -22,6 +22,9 @@ services:
       - topicos_net_test
     volumes:
       - .:/usr/src/app
+      # - ./frontend/.next:/app/frontend/.next
+      # - ./frontend/public:/app/frontend/public
+      - /app/node_modules
 
   mongo:
     container_name: mongo_topicos
