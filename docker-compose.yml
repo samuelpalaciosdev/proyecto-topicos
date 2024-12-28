@@ -1,45 +1,45 @@
-version: '3.8'
+version: "3.8"
 
 services:
-    web:
-      container_name: node_topicos
-      restart: always
-      build: .
-      env_file: .env
-      environment:
-        - MONGO_USERNAME=$MONGO_USERNAME
-        - MONGO_PASSWORD=$MONGO_PASSWORD
-        - MONGO_HOSTNAME=mongo
-        - MONGO_PORT=$MONGO_PORT
-        - MONGO_DB=$MONGO_DB
-      ports:
-        - "5000:3005"
-      links:
-        - mongo
-      depends_on:
-        - mongo
-      networks:
-        - topicos_net_test
-      volumes:
-        - .:/usr/src/app
-    
-    mongo:
-      container_name: mongo_topicos
-      image: mongo:4.4.18
-      env_file: .env
-      environment:
-        - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
-        - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
-      ports:
-        - "27017:27017"
-      networks:
-        - topicos_net_test
-      volumes:
-        - mongodata:/data/db
+  web:
+    container_name: node_topicos
+    restart: always
+    build: .
+    env_file: .env
+    environment:
+      - MONGO_USERNAME=$MONGO_USERNAME
+      - MONGO_PASSWORD=$MONGO_PASSWORD
+      - MONGO_HOSTNAME=mongo
+      - MONGO_PORT=$MONGO_PORT
+      - MONGO_DB=$MONGO_DB
+    ports:
+      - "5000:3005"
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    networks:
+      - topicos_net_test
+    volumes:
+      - .:/usr/src/app
+
+  mongo:
+    container_name: mongo_topicos
+    image: mongo:4.4.18
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGO_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGO_PASSWORD
+    ports:
+      - "27017:27017"
+    networks:
+      - topicos_net_test
+    volumes:
+      - mongodata:/data/db
 
 volumes:
   mongodata:
-  node_modules: 
+  node_modules:
 
 networks:
   topicos_net_test:
