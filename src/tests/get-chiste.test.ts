@@ -3,11 +3,7 @@ import app from "../index";
 import { connectDb, disconnectDb } from "../db/connect";
 import Chiste from "../models/chiste-model";
 
-/**
- * @swagger
- *  1er Get: Obtener Chiste por parámetro URL
- */
-
+// 1. Obtener Chiste por parámetro URL
 describe("GET api/chistes/fuente/:fuente", () => {
   beforeAll(async () => {
     await connectDb();
@@ -48,11 +44,7 @@ describe("GET api/chistes/fuente/:fuente", () => {
   });
 });
 
-/**
- * @swagger
- *  5to Get: Obtener Chiste por ID
- */
-
+// 5. Obtener chiste de la db por id
 describe("GET api/chistes/:id", () => {
   beforeAll(async () => {
     await connectDb();
@@ -68,7 +60,7 @@ describe("GET api/chistes/:id", () => {
     // Si no existe un chist en la db fail
     if (!primerChiste) {
       console.error(
-        "No hay chistes en la base de datos, por favor crea uno para pasar el test"
+        "No hay chistes en la base de datos, por favor crea uno para pasar el test",
       );
       return;
     }
@@ -82,11 +74,7 @@ describe("GET api/chistes/:id", () => {
   });
 });
 
-/**
- * @swagger
- *  6to Get: Obtener cantidad de chistes por su Categoria
- */
-
+// 6. Get chistes de la db por categoria y su cantidad
 describe("GET api/chistes?categoria=$categoria", () => {
   beforeAll(async () => {
     await connectDb();
@@ -97,10 +85,10 @@ describe("GET api/chistes?categoria=$categoria", () => {
   });
 
   // Dad
-  it("GET api/chistes/categoria=dad%20joke Debería traer la cantidad de chistes que hay en Dad", async () => {
-    const categoria = `dad%20joke`;
+  it("GET api/chistes/categoria=dad-joke Debería traer la cantidad de chistes con categoria dad joke", async () => {
+    const categoria = "dad-joke";
     const response = await request(app).get(
-      `/api/chistes?categoria=${categoria}`
+      `/api/chistes?categoria=${categoria}`,
     );
 
     expect(response.status).toBe(200);
@@ -108,15 +96,15 @@ describe("GET api/chistes?categoria=$categoria", () => {
       expect.objectContaining({
         chistesCategoria: expect.any(Array),
         cantidad: expect.any(Number),
-      })
+      }),
     ); // Debería traerme un array
   });
 
   // Humor Negro
-  it("GET api/chistes/categoria=humor%20negro Debería traer la cantidad de chistes que hay en Dad", async () => {
-    const categoria = `humor%20negro`;
+  it("GET api/chistes/categoria=humor-negro Debería traer la cantidad de chistes con categoria humor negro", async () => {
+    const categoria = `humor-negro`;
     const response = await request(app).get(
-      `/api/chistes?categoria=${categoria}`
+      `/api/chistes?categoria=${categoria}`,
     );
 
     expect(response.status).toBe(200);
@@ -124,15 +112,15 @@ describe("GET api/chistes?categoria=$categoria", () => {
       expect.objectContaining({
         chistesCategoria: expect.any(Array),
         cantidad: expect.any(Number),
-      })
+      }),
     ); // Debería traerme un array
   });
 
   // Chistoso
-  it("GET api/chistes/categoria=chistoso Debería traer la cantidad de chistes que hay en Dad", async () => {
+  it("GET api/chistes/categoria=chistoso Debería traer la cantidad de chistes con categoria chistoso", async () => {
     const categoria = `chistoso`;
     const response = await request(app).get(
-      `/api/chistes?categoria=${categoria}`
+      `/api/chistes?categoria=${categoria}`,
     );
 
     expect(response.status).toBe(200);
@@ -140,15 +128,12 @@ describe("GET api/chistes?categoria=$categoria", () => {
       expect.objectContaining({
         chistesCategoria: expect.any(Array),
         cantidad: expect.any(Number),
-      })
+      }),
     ); // Debería traerme un array
   });
 });
 
-/**
- *  7 Get: Puntuaje
- */
-
+// 7. Get chistes de la db por puntaje
 describe("GET api/chistes?puntaje=$num", () => {
   beforeAll(async () => {
     await connectDb();
@@ -161,7 +146,7 @@ describe("GET api/chistes?puntaje=$num", () => {
   it("Debería traer todos los chistes con cierto puntaje de la db", async () => {
     const puntajeNum = 5;
     const response = await request(app).get(
-      `/api/chistes?puntaje=${puntajeNum}`
+      `/api/chistes?puntaje=${puntajeNum}`,
     );
 
     expect(response.status).toBe(200); // Espero que el estatus sea ok

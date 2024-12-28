@@ -1,9 +1,9 @@
 import request from "supertest";
 import app from "../index";
 import Chiste from "../models/chiste-model";
-
 import { connectDb, disconnectDb } from "../db/connect";
-import { ChisteType } from "../validations/chiste-schema";
+
+// 4. Delete chiste de la db by id
 describe("DELETE api/chistes/:id", () => {
   beforeAll(async () => {
     await connectDb();
@@ -23,7 +23,7 @@ describe("DELETE api/chistes/:id", () => {
     }
 
     const response = await request(app).delete(
-      `/api/chistes/${primerChiste._id}`
+      `/api/chistes/${primerChiste._id}`,
     );
 
     expect(response.status).toBe(200);
@@ -35,7 +35,7 @@ describe("DELETE api/chistes/:id", () => {
           deletedCount: 1,
         },
         success: true,
-      })
+      }),
     );
   });
 });

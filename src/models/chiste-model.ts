@@ -33,7 +33,7 @@ const chisteSchema = new mongoose.Schema({
         CategoriaChiste.HumorNegro,
         CategoriaChiste.Chistoso,
         CategoriaChiste.Malo,
-      ], // Las pongo en minúscula porque es case sensitive la validación
+      ],
       message:
         "Categoría inválida, debe ser: Dad joke, Humor Negro, Chistoso o Malo",
     },

@@ -11,7 +11,7 @@ const start = async () => {
 
     app.listen(PORT, () => {
       console.log(`Server is running on port: ${PORT}`);
-
+      // Una vez corriendo la app, activa swagger para documentar y visualizar las rutas de la API.
       swaggerDocs(app);
       // REF: quitar port forwarding docker
       console.log(
@@ -20,7 +20,7 @@ const start = async () => {
     });
   } catch (err) {
     console.error("Failed to start server:", err);
-    process.exit(1); // Cerrar
+    process.exit(1); // Finaliza el proceso de la app, ya que no se pudo iniciar el servidor
   }
 };
 

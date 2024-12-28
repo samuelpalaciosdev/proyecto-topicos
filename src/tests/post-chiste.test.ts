@@ -3,7 +3,9 @@ import app from "../index";
 
 import { connectDb, disconnectDb } from "../db/connect";
 import { ChisteType } from "../validations/chiste-schema";
+import { CategoriaChiste } from "../validations/enums";
 
+// 2. Crear chiste
 describe("POST api/chistes", () => {
   beforeAll(async () => {
     await connectDb();
@@ -17,7 +19,7 @@ describe("POST api/chistes", () => {
     const chiste: ChisteType = {
       texto: "Un pana, con 2 panas, un tercer pana, wao 3 panas",
       puntaje: 3,
-      categoria: "dad joke",
+      categoria: CategoriaChiste.HumorNegro, // humor-negro
     };
 
     const response = await request(app).post("/api/chistes").send(chiste);

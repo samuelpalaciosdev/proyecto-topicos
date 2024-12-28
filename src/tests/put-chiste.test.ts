@@ -3,7 +3,9 @@ import app from "../index";
 import Chiste from "../models/chiste-model";
 
 import { connectDb, disconnectDb } from "../db/connect";
+import { CategoriaChiste } from "../validations/enums";
 
+// 3. Actualizar chiste dado el id
 describe("PUT api/chistes/:id", () => {
   beforeAll(async () => {
     await connectDb();
@@ -27,7 +29,7 @@ describe("PUT api/chistes/:id", () => {
       texto: "Un chiste de prueba para PUTTT",
       autor: "Prueba Inicial",
       puntaje: 5,
-      categoria: "dad joke",
+      categoria: CategoriaChiste.Malo, // "malo"
     };
 
     const response = await request(app)
@@ -43,7 +45,7 @@ describe("PUT api/chistes/:id", () => {
           acknowledged: true,
           modifiedCount: expect.any(Number),
         }),
-      })
+      }),
     );
   });
 });

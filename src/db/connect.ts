@@ -1,8 +1,10 @@
 import "dotenv/config"; // Carga variables locales del .env
 
 import mongoose from "mongoose";
+// Por default en nuevas versiones de mongoose (trabajamos con una mas vieja por mi pc)
 mongoose.set("strictQuery", false);
 
+// Crea la conexión con la db de mongo
 const connectDb = (): Promise<typeof mongoose> => {
   const {
     MONGO_USERNAME,

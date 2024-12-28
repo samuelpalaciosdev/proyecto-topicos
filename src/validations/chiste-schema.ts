@@ -2,6 +2,8 @@ import { z } from "zod";
 
 import { CategoriaChiste, FuenteDelChiste } from "./enums";
 
+// Estos schemas sirven para validar las requests de los distintos endpoints
+
 // Schema del request del endpoint api/chistes/fuente/:fuente
 export const getChisteByFuenteSchema = z.object({
   params: z.object({
@@ -37,11 +39,12 @@ export const chisteSchema = z.object({
     .min(1, "El puntaje debe ser mínimo 1")
     .max(10, "El puntaje debe ser como máximo 10"),
 
-  categoria: z
-    .enum(["dad joke", "humor negro", "chistoso", "malo"])
-    .describe(
-      "Categoría inválida, debe ser: Dad joke, Humor Negro, Chistoso o Malo"
-    ),
+  categoria: z.nativeEnum(CategoriaChiste),
 });
+/*
+ .describe(
+      "Categoría inválida, debe ser: Dad joke, Humor Negro, Chistoso o Malo",
+    ),
+*/
 
 export type ChisteType = z.input<typeof chisteSchema>;

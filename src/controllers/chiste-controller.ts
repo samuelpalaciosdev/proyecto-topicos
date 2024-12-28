@@ -2,22 +2,15 @@ import { Request, Response, NextFunction } from "express";
 import { checkValidObjectId } from "../utils/check-object-id";
 import {
   chisteSchema,
-  ChisteType,
   getChisteByFuenteSchema,
   getChistesByCategoriaSchema,
   getChistesByPuntajeSchema,
 } from "../validations/chiste-schema";
-import { CategoriaChiste, FuenteDelChiste } from "../validations/enums";
+import { FuenteDelChiste } from "../validations/enums";
 import Chiste from "../models/chiste-model";
 import { fetchChisteChuckNorris, fetchChisteDad } from "../services/services";
 
-/**
- * @swagger
- *  0 Get: Obtener Todos los chistes de la DB
- */
-
-// Hey
-
+// Trae todos los chistes de la db - /api/chistes
 export async function getChistes(req: Request, res: Response) {
   try {
     const chistes = await Chiste.find();
@@ -36,12 +29,7 @@ export async function getChistes(req: Request, res: Response) {
   }
 }
 
-/**
- * @swagger
- *  1er Get: Obtener Chiste por parámetro URL
- */
-
-// /api/chistes/fuente/:fuente
+// 1. Obtener Chiste por parámetro URL - /api/chistes/fuente/:fuente
 export async function getChisteByFuente(req: Request, res: Response) {
   try {
     const { fuente } = req.params;
@@ -91,7 +79,6 @@ export async function getChisteByFuente(req: Request, res: Response) {
     }
 
     // Retorna el chiste obtenido
-
     return res.status(200).json(chiste);
   } catch (error) {
     console.error(error);
@@ -102,11 +89,8 @@ export async function getChisteByFuente(req: Request, res: Response) {
   }
 }
 
-/**
- * @swagger
- *  2do POST: Postear un Chiste
- */
-
+// 2. Crear chiste en la db - api/chistes/ (POST)
+// Tiene un middleware (en routes) que permite máximo crear 3 chistes cada 5 minutos
 export async function createChiste(req: Request, res: Response) {
   try {
     const {
@@ -148,23 +132,17 @@ export async function createChiste(req: Request, res: Response) {
   }
 }
 
-/**
- * @swagger
- * 3er Requerimiento: Put
- * * Ya tiene un middleware que verifica los campos
- * * La idea es agarrar los datos del request, y reeemplazar únicamente los retribuidos por el usuario
- * query = Tiene el id buscado
- * body = tiene los datos retribuidos por el usuario
- *
- */
-
+/* Ya tiene un middleware que verifica los campos (en routes)
+   El request debe incluir todos los campos de Chiste
+*/
+// 3. Actualizar chiste dado el id - api/chistes/:id
 export async function putChiste(req: Request, res: Response) {
   try {
-    // Agarro los datos de una vez
-    const query = { _id: req.params.id };
-    const body = { $set: req.body };
+    // Destructurando request
+    const query = { _id: req.params.id }; // Id del chiste a actualizar
+    const body = { $set: req.body }; // Datos que se quieren reemplazar
 
-    // Check si el id es un id válido de la DB
+    // Check si el id es un id válido de mongoose
     if (!checkValidObjectId(query._id)) {
       return res.status(400).json({
         mensaje: `Id no válido: ${query._id}`,
@@ -187,12 +165,7 @@ export async function putChiste(req: Request, res: Response) {
   }
 }
 
-/**
- * @swagger
- * 4to Requerimiento: Delete por ID
- *  Se busca el chiste por ID, si es conseguido, se elimina de la DB
- */
-
+// 4. Delete chiste de la db by id - /api/chistes/:id
 export async function deleteChisteById(req: Request, res: Response) {
   try {
     const query = { _id: req.params.id };
@@ -207,7 +180,7 @@ export async function deleteChisteById(req: Request, res: Response) {
 
     const result = await Chiste.deleteOne(query);
 
-    // Aqui vou a checkear si se borro en efecto
+    // Check si se boró efectivamente
     if (result.deletedCount === 1) {
       return res.status(200).json({
         message: "Chiste eliminado de la Base de Datos",
@@ -230,11 +203,7 @@ export async function deleteChisteById(req: Request, res: Response) {
   }
 }
 
-/**
- * @swagger
- *  5to Get: Obtener Chiste por ID
- */
-
+// 5. Obtener chiste de la db por id - api/chistes/:id
 export async function getChisteById(req: Request, res: Response) {
   try {
     const { id } = req.params;
@@ -265,12 +234,55 @@ export async function getChisteById(req: Request, res: Response) {
     });
   }
 }
-/**
- * @swagger
- *  6to Get: Obtener cantidad de chistes por su Categoria
- */
 
-export async function getChisteCategoria(req: Request, res: Response) {
+// 6. Get chistes de la db por categoria y su cantidad - /api/chistes?puntaje=num
+export async function getChistesByPuntaje(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { puntaje } = req.query;
+
+    // Validar cuando pase el query de puntaje
+    if (puntaje) {
+      const puntajeValido = getChistesByPuntajeSchema.safeParse({
+        query: req.query,
+      });
+
+      if (!puntajeValido.success) {
+        return res.status(400).json({
+          mensaje: "Puntaje no válido, debe ser del 1 al 10",
+          success: false,
+        });
+      }
+
+      const chistes = await Chiste.find({ puntaje });
+
+      // Check si no hay chistes con el puntaje dado
+      if (chistes.length === 0) {
+        return res.status(404).json({
+          mensaje: `No se encontraron chistes con el puntaje: ${puntaje}`,
+          success: false,
+        });
+      }
+
+      return res.status(200).json(chistes);
+    }
+
+    // next(); // Llama al siguiente controlador (getChisteById) para que de el error de id no conocido
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      mensaje:
+        "Ocurrió un error al buscar chistes con el puntaje dado. Intenta nuevamente.",
+      success: false,
+    });
+  }
+}
+
+// 7. Get chistes de la db por puntaje - api/chistes?categoria=nombre
+export async function getChistesByCategoria(req: Request, res: Response) {
   try {
     const { categoria } = req.query;
 
@@ -304,57 +316,6 @@ export async function getChisteCategoria(req: Request, res: Response) {
   } catch (err) {
     return res.status(500).json({
       mensaje: `Ocurrio un error al buscar los chistes por categoria: ${err}`,
-      success: false,
-    });
-  }
-}
-
-/**
- * @swagger
- *  7 Get: Obtener chiste por puntuaje
- */
-
-// /api/chistes?puntaje=num
-export async function getChistesByPuntaje(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const { puntaje } = req.query;
-
-    // Validar cuando pase el query de puntaje
-    if (puntaje) {
-      const puntajeValido = getChistesByPuntajeSchema.safeParse({
-        query: req.query,
-      });
-
-      if (!puntajeValido.success) {
-        return res.status(400).json({
-          mensaje: "Puntaje no válido, debe ser del 1 al 10",
-          success: false,
-        });
-      }
-
-      const chistes = await Chiste.find({ puntaje });
-
-      // Check si no hay chistes con el puntaje dado
-      if (chistes.length === 0) {
-        return res.status(404).json({
-          mensaje: `No se encontraron chistes con el puntaje: ${puntaje}`,
-          success: false,
-        });
-      }
-
-      return res.status(200).json(chistes);
-    }
-
-    next(); // Llama al siguiente controlador (getChisteById) para que de el error de id no conocido
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      mensaje:
-        "Ocurrió un error al buscar chistes con el puntaje dado. Intenta nuevamente.",
       success: false,
     });
   }
