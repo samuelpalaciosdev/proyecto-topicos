@@ -43,11 +43,13 @@
  *                     autor: "Daniel Pistola"
  *                     puntaje: 6
  *                     categoria: "humor-negro"
+ *                     __v: 0
  *                   - _id: "676f377a3390e7ecad887b2f"
  *                     texto: "Un pana con dos panas, un tercer pana, wao 3 panas"
  *                     autor: "Nanutria"
  *                     puntaje: 8
  *                     categoria: "dad-joke"
+ *                     __v: 0
  *       404:
  *         description: No se encontraron chistes en la base de datos
  *         content:
@@ -223,4 +225,109 @@
  *         id: "vkV0L6wcFlb"
  *         joke: "Did you hear about the runner who was criticized? He just took it in stride"
  *         status: 200
+ */
+
+/**
+ * @swagger
+ * /api/chistes:
+ *   post:
+ *     summary: Crea un nuevo chiste
+ *     description: Permite crear un nuevo chiste en la base de datos
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               texto:
+ *                 type: string
+ *                 description: El texto del chiste
+ *                 example: "ahorita creen que si en la medicina homeopática, tú las ves y que: yo tenía una amiga que le faltaba una pierna, le pusimos unas goticas de trululu y le creció de nuevo"
+ *               autor:
+ *                 type: string
+ *                 description: El autor del chiste (opcional, por defecto "Se perdió en el Ávila como Led")
+ *                 example: "daniel pistola"
+ *               puntaje:
+ *                 type: integer
+ *                 description: La calificación del chiste, del 1 al 10
+ *                 example: 8
+ *               categoria:
+ *                 type: string
+ *                 description: Categoría del chiste
+ *                 example: "humor-negro"
+ *                 enum:
+ *                   - "dad-joke"
+ *                   - "humor-negro"
+ *                   - "chistoso"
+ *                   - "malo"
+ *             required:
+ *               - texto
+ *               - puntaje
+ *               - categoria
+ *     responses:
+ *       201:
+ *         description: Chiste creado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 chiste:
+ *                   type: object
+ *                   description: El chiste creado
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: Id del chiste
+ *                       example: "677084827c9016aec3812606"
+ *                     texto:
+ *                       type: string
+ *                       description: El texto del chiste
+ *                       example: "ahorita creen que si en la medicina homeopática, tú las ves y que: yo tenía una amiga que le faltaba una pierna, le pusimos unas goticas de trululu y le creció de nuevo"
+ *                     autor:
+ *                       type: string
+ *                       description: Autor del chiste
+ *                       example: "daniel pistola"
+ *                     puntaje:
+ *                       type: integer
+ *                       description: Calificación del chiste
+ *                       example: 6
+ *                     categoria:
+ *                       type: string
+ *                       description: Categoría del chiste
+ *                       example: "humor-negro"
+ *                     __v:
+ *                       type: integer
+ *                       description: Version key de mongoose
+ *                       example: 0
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Datos inválidos o campos requeridos faltantes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Datos inválidos, por favor intente de nuevo"
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Error interno al crear el chiste
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Ocurrió un error al crear el chiste"
+ *                 success:
+ *                   type: boolean
+ *                   example: false
  */
