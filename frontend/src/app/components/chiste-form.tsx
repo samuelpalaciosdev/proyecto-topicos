@@ -211,35 +211,6 @@ export function ChisteForm() {
                     </FormItem>
                   )}
                 />
-                {/* Categoria */}
-                {/* <FormField
-                  control={form.control}
-                  name="categoria"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Categoría</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecciona una categoría" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="dad-joke">Dad Joke</SelectItem>
-                          <SelectItem value="humor-negro">
-                            Humor Negro
-                          </SelectItem>
-                          <SelectItem value="chistoso">Chistoso</SelectItem>
-                          <SelectItem value="Malo">malo</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
 
                 <FormField
                   control={form.control}
