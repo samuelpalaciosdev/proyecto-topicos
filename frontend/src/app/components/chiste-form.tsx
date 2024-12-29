@@ -37,10 +37,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChisteData } from "../api/api";
-import { SelectItemText } from "@radix-ui/react-select";
+import { FormPuntaje } from "./form-puntaje";
 
 const optionsReq: string[] = ["POST", "GET", "PUT", "DELETE"];
 const optionsGet: string[] = ["ID", "FUENTE", "PUNTAJE", "CATEGORIA"];
+const fuentesGet: string[] = ["DAD", "CHUCK", "PROPIO"];
 const categoriaReq = ["dad-joke", "humor-negro", "chistoso", "malo"];
 
 export function ChisteForm() {
@@ -48,6 +49,7 @@ export function ChisteForm() {
     string | ChisteData | ChisteData[] | null
   >(null);
   const [getValue, setGetValue] = useState<string>(optionsGet[0]);
+  const [fuenteValue, setFuenteValue] = useState<string>(fuentesGet[0]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -139,41 +141,61 @@ export function ChisteForm() {
                 </FormItem>
               )}
             />
-            {/* En caso de GET o PUT */}
-            {/* {(form.watch("method") === "GET" ||
-              form.watch("method") === "PUT") && ( */}
 
             {form.watch("method") === "GET" && (
-              <>
-                <FormItem>
-                  <FormLabel>Selecciona el GET</FormLabel>
-                  <Select
-                    value={getValue}
-                    onValueChange={(value) => setGetValue(value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona una opción de GET" />
-                    </SelectTrigger>
+              <FormItem>
+                <FormLabel>Selecciona el GET</FormLabel>
+                <Select
+                  value={getValue}
+                  onValueChange={(value) => setGetValue(value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona una opción de GET" />
+                  </SelectTrigger>
 
-                    <SelectContent>
-                      {optionsGet.map((item, index) => (
-                        <SelectItem
-                          key={index}
-                          value={item}
-                          className="px-3 py-2 hover:bg-gray-100"
-                        >
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Aqui vas a elegir el tipo de búsqueda que quieres utilizar
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              </>
+                  <SelectContent>
+                    {optionsGet.map((item, index) => (
+                      <SelectItem
+                        key={index}
+                        value={item}
+                        className="px-3 py-2 hover:bg-gray-100"
+                      >
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  Aqui vas a elegir el tipo de búsqueda que quieres utilizar
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
             )}
+
+            {/* En caso de que sea una FUENTE */}
+            {getValue === "FUENTE" && (
+              <FormItem>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={(value) => setFuenteValue(value)}
+                    defaultValue={fuenteValue}
+                    className="flex flex-col space-y-1"
+                  >
+                    {fuentesGet.map((fuente, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <RadioGroupItem value={fuente} id={fuente} />
+                        <Label htmlFor={fuente}>{fuente}</Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              </FormItem>
+            )}
+
+            {/* En caso de que sea PUNTAJE */}
+            {getValue === "PUNTAJE" && <></>}
+
+            {/* En caso de que quiera buscar por ID, PUT, DELETE */}
 
             {(getValue === "ID" ||
               form.watch("method") === "DELETE" ||
@@ -232,7 +254,7 @@ export function ChisteForm() {
                   )}
                 />
                 {/* Puntaje */}
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="puntaje"
                   render={({ field }) => (
@@ -252,7 +274,9 @@ export function ChisteForm() {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
+
+                <FormPuntaje control={form.control} />
 
                 <FormField
                   control={form.control}
