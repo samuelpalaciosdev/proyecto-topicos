@@ -2,71 +2,43 @@
  * @swagger
  * /api/chistes:
  *   get:
- *     summary: Trae todos los chistes de la db
- *     description: Obtiene la lista de todos los chistes disponibles en la db
+ *     summary: Obtiene chistes
+ *     description: Devuelve todos los chistes o los chistes filtrados por categoría si se proporciona el query.
+ *     parameters:
+ *       - in: query
+ *         name: categoria
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - dad-joke
+ *             - humor-negro
+ *             - chistoso
+ *             - malo
+ *         required: false
+ *         description: Categoría de los chistes a buscar. Si no se proporciona, devuelve todos los chistes.
  *     responses:
  *       200:
- *         description: Lista de chistes encontrada exitosamente
+ *         description: Lista de chistes encontrada exitosamente.
+ *         content:
+ *           application/json:
+ *             oneOf:
+ *               - $ref: '#/components/schemas/AllChistesResponse'
+ *               - $ref: '#/components/schemas/ChistesByCategoriaResponse'
+ *       400:
+ *         description: Parámetro de categoría inválido.
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                     description: Id del chiste
- *                   texto:
- *                     type: string
- *                     description: El chiste
- *                   autor:
- *                     type: string
- *                     description: Autor del chiste
- *                   puntaje:
- *                     type: number
- *                     description: Calificación del chiste del 1 al 10
- *                   categoria:
- *                     type: string
- *                     description: Categoría del chiste
- *                     enum:
- *                       - dad-joke
- *                       - humor-negro
- *                       - chistoso
- *                       - malo
- *             examples:
- *               ejemplo1:
- *                 summary: Chistes de la base de datos
- *                 value:
- *                   - _id: "677084827c9016aec3812606"
- *                     texto: "Ahorita creen que si en la medicina homeopática, tú las ves y que: yo tenía una amiga que le faltaba una pierna, le pusimos unas goticas de trululu y le creció de nuevo"
- *                     autor: "Daniel Pistola"
- *                     puntaje: 6
- *                     categoria: "humor-negro"
- *                     __v: 0
- *                   - _id: "676f377a3390e7ecad887b2f"
- *                     texto: "Un pana con dos panas, un tercer pana, wao 3 panas"
- *                     autor: "Nanutria"
- *                     puntaje: 8
- *                     categoria: "dad-joke"
- *                     __v: 0
+ *               $ref: '#/components/schemas/InvalidCategoriaResponse'
  *       404:
- *         description: No se encontraron chistes en la base de datos
+ *         description: No se encontraron chistes.
  *         content:
  *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Mensaje de error
- *                   example: "No se encontraron chistes"
- *                 success:
- *                   type: boolean
- *                   description: Indica si la operación fue exitosa
- *                   example: false
+ *             oneOf:
+ *               - $ref: '#/components/schemas/NotFoundAllChistesResponse'
+ *               - $ref: '#/components/schemas/NotFoundChistesByCategoriaResponse'
  *       500:
- *         description: Error interno al obtener los chistes
+ *         description: Error interno del servidor.
  *         content:
  *           application/json:
  *             schema:
@@ -74,12 +46,74 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Mensaje de error
  *                   example: "Ocurrió un error al buscar los chistes"
  *                 success:
  *                   type: boolean
- *                   description: Indica si la operación fue exitosa
  *                   example: false
+ * components:
+ *   schemas:
+ *     AllChistesResponse:
+ *       type: array
+ *       items:
+ *         type: object
+ *         properties:
+ *           _id:
+ *             type: string
+ *             description: Id del chiste
+ *           texto:
+ *             type: string
+ *             description: El chiste
+ *           autor:
+ *             type: string
+ *             description: Autor del chiste
+ *           puntaje:
+ *             type: number
+ *             description: Calificación del chiste del 1 al 10
+ *           categoria:
+ *             type: string
+ *             description: Categoría del chiste
+ *             enum:
+ *               - dad-joke
+ *               - humor-negro
+ *               - chistoso
+ *               - malo
+ *     ChistesByCategoriaResponse:
+ *       type: object
+ *       properties:
+ *         chistesCategoria:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/AllChistesResponse/items'
+ *         cantidad:
+ *           type: integer
+ *           description: Número total de chistes encontrados
+ *     InvalidCategoriaResponse:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
+ *           example: "Categoría no válida"
+ *         success:
+ *           type: boolean
+ *           example: false
+ *     NotFoundAllChistesResponse:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
+ *           example: "No se encontraron chistes"
+ *         success:
+ *           type: boolean
+ *           example: false
+ *     NotFoundChistesByCategoriaResponse:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
+ *           example: "No hay chistes que tengan esta categoría en la DB"
+ *         success:
+ *           type: boolean
+ *           example: false
  */
 
 /**
@@ -405,7 +439,7 @@
  *                   type: boolean
  *                   example: true
  *       400:
- *         description: El Id proporcionado no es válido
+ *         description: El id proporcionado no es válido
  *         content:
  *           application/json:
  *             schema:
@@ -500,6 +534,87 @@
  *                 message:
  *                   type: string
  *                   example: "Ocurrió un error al eliminar el chiste"
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ */
+
+/**
+ * @swagger
+ * /api/chistes/{id}:
+ *   get:
+ *     summary: Obtiene un chiste por su id
+ *     description: Devuelve los datos de un chiste almacenado en la base de datos dado su id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: id del chiste que se desea obtener
+ *     responses:
+ *       200:
+ *         description: Chiste obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "677084827c9016aec3812606"
+ *                 texto:
+ *                   type: string
+ *                   example: "ahorita creen que si en la medicina homeopática, tú las ves y que: yo tenía una amiga que le faltaba una pierna, le pusimos unas goticas de trululu y le creció de nuevo"
+ *                 autor:
+ *                   type: string
+ *                   example: "daniel pistola"
+ *                 puntaje:
+ *                   type: integer
+ *                   example: 6
+ *                 categoria:
+ *                   type: string
+ *                   example: "humor-negro"
+ *                 __v:
+ *                   type: integer
+ *                   description: Version key de mongoose
+ *                   example: 0
+ *       400:
+ *         description: El id proporcionado no es válido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Id no válido: {id}"
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *       404:
+ *         description: Chiste no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No hay chiste con el id: {id}"
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Ocurrió un error al buscar el chiste"
  *                 success:
  *                   type: boolean
  *                   example: false
