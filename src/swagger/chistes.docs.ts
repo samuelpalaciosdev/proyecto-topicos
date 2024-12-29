@@ -15,7 +15,7 @@
  *                 type: object
  *                 properties:
  *                   _id:
- *                     type: ObjectId
+ *                     type: string
  *                     description: Id del chiste
  *                   texto:
  *                     type: string
@@ -74,7 +74,7 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Mensaje de error.
+ *                   description: Mensaje de error
  *                   example: "Ocurrió un error al buscar los chistes"
  *                 success:
  *                   type: boolean
@@ -327,6 +327,179 @@
  *                 message:
  *                   type: string
  *                   example: "Ocurrió un error al crear el chiste"
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ */
+
+/**
+ * @swagger
+ * /api/chistes/{id}:
+ *   put:
+ *     summary: Actualiza un chiste existente
+ *     description: Permite actualizar los datos de un chiste existente dado su id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Id del chiste a actualizar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               texto:
+ *                 type: string
+ *                 description: El nuevo texto del chiste
+ *                 example: "Chiste versión 2"
+ *               autor:
+ *                 type: string
+ *                 description: El autor del chiste
+ *                 example: "Autor actualizado"
+ *               puntaje:
+ *                 type: integer
+ *                 description: El puntaje actualizado del chiste
+ *                 example: 2
+ *               categoria:
+ *                 type: string
+ *                 description: La nueva categoría del chiste
+ *                 example: "malo"
+ *     responses:
+ *       201:
+ *         description: Chiste actualizado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 chiste:
+ *                   type: object
+ *                   description: Detalles del chiste actualizado
+ *                   properties:
+ *                     acknowledged:
+ *                       type: boolean
+ *                       description: Si la actualización fue reconocida
+ *                       example: true
+ *                     modifiedCount:
+ *                       type: integer
+ *                       description: Cantidad de documentos modificados
+ *                       example: 1
+ *                     upsertedId:
+ *                       type: string
+ *                       nullable: true
+ *                       description: Id
+ *                       example: null
+ *                     upsertedCount:
+ *                       type: integer
+ *                       description: Cantidad de documentos insertados
+ *                       example: 0
+ *                     matchedCount:
+ *                       type: integer
+ *                       description: Cantidad de documentos coincidentes (por id)
+ *                       example: 1
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: El Id proporcionado no es válido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Id no válido: 123yo"
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Error interno del servidor al intentar actualizar el chiste
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Ocurrió un error al intentar actualizar el chiste"
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ */
+
+/**
+ * @swagger
+ * /api/chistes/{id}:
+ *   delete:
+ *     summary: Elimina un chiste existente
+ *     description: Permite eliminar un chiste existente dado su id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Id del chiste a eliminar
+ *     responses:
+ *       200:
+ *         description: Chiste eliminado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Chiste eliminado de la base de datos"
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     acknowledged:
+ *                       type: boolean
+ *                       example: true
+ *                     deletedCount:
+ *                       type: integer
+ *                       example: 1
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: No se encontró ningún chiste con ese id en la base de datos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No se encontró ningún chiste con ese id"
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     acknowledged:
+ *                       type: boolean
+ *                       example: false
+ *                     deletedCount:
+ *                       type: integer
+ *                       example: 0
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Error interno del servidor al intentar eliminar el chiste
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Ocurrió un error al eliminar el chiste"
  *                 success:
  *                   type: boolean
  *                   example: false
