@@ -1,6 +1,6 @@
 type ChisteData = {
   id?: string;
-  text: string;
+  texto: string;
   autor?: string;
   puntaje: number;
   categoria: "dad-joke" | "humor-negro" | "chistoso" | "malo";
@@ -10,7 +10,7 @@ type ChisteData = {
  * 0: Conseguir todos los chistes
  */
 export async function fetchChiste(
-  id?: string,
+  id?: string
 ): Promise<ChisteData | ChisteData[]> {
   const response = await fetch(`/api/chistes/${id}`);
 
