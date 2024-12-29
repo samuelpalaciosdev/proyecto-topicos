@@ -13,6 +13,7 @@ describe("GET api/chistes/fuente/:fuente", () => {
     await disconnectDb();
   });
 
+  // Fuente chuck norris jokes
   it("GET api/chistes/fuente/chuck Debería traer un chiste de la api de chuck jokes", async () => {
     const response = await request(app).get("/api/chistes/fuente/chuck");
 
@@ -23,6 +24,7 @@ describe("GET api/chistes/fuente/:fuente", () => {
     expect(response.body).toHaveProperty("url");
   });
 
+  // Fuente dad jokes
   it("GET api/chistes/fuente/dad Debería traer un chiste de la api de dad jokes", async () => {
     const response = await request(app).get("/api/chistes/fuente/dad");
 
@@ -33,6 +35,7 @@ describe("GET api/chistes/fuente/:fuente", () => {
     expect(response.body).toHaveProperty("status");
   });
 
+  // Fuente propio (base de datos )
   it("GET api/chistes/fuente/propio Debería traer un chiste de la db", async () => {
     const response = await request(app).get("/api/chistes/fuente/propio");
 
@@ -41,6 +44,16 @@ describe("GET api/chistes/fuente/:fuente", () => {
     expect(response.body).toHaveProperty("_id");
     expect(response.body).toHaveProperty("texto");
     expect(response.body).toHaveProperty("categoria");
+  });
+
+  // Fuente inválida
+  it("GET api/chistes/fuente/asdf Debería dar error, ya que la fuente no es válida", async () => {
+    const response = await request(app).get("/api/chistes/fuente/asdf");
+
+    expect(response.status).toBe(400); // Espero que el estatus sea de error
+    // Expect propiedades
+    expect(response.body).toHaveProperty("message");
+    expect(response.body).toHaveProperty("success");
   });
 });
 
@@ -131,6 +144,18 @@ describe("GET api/chistes?categoria=$categoria", () => {
       }),
     ); // Debería traerme un array
   });
+
+  // Categoría no válida
+  it("GET api/chistes/categoria=asdf Debería dar error, ya que la categoria no es válida", async () => {
+    const categoria = `asdf`;
+    const response = await request(app).get(
+      `/api/chistes?categoria=${categoria}`,
+    );
+    expect(response.status).toBe(400); // Espero que el estatus sea de error
+    // Expect propiedades
+    expect(response.body).toHaveProperty("message");
+    expect(response.body).toHaveProperty("success");
+  });
 });
 
 // 7. Get chistes de la db por puntaje
@@ -152,5 +177,17 @@ describe("GET api/chistes?puntaje=$num", () => {
     expect(response.status).toBe(200); // Espero que el estatus sea ok
     // Expect propiedades esenciales
     expect(response.body).toBeInstanceOf(Array); // Debería traerme un array
+  });
+  // Puntaje inválido
+  it("Debería dar un error ya que el puntaje no es válido, es mayor a 10 o menor que 1", async () => {
+    const puntajeNum = 12;
+    const response = await request(app).get(
+      `/api/chistes?puntaje=${puntajeNum}`,
+    );
+
+    expect(response.status).toBe(400); // Espero que el estatus sea de error
+    // Expect propiedades
+    expect(response.body).toHaveProperty("message");
+    expect(response.body).toHaveProperty("success");
   });
 });

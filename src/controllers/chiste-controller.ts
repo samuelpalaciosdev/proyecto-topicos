@@ -238,6 +238,46 @@ export async function getChisteById(req: Request, res: Response) {
 }
 
 // 6. Get chistes de la db por categoria y su cantidad - /api/chistes?puntaje=num
+export async function getChistesByCategoria(req: Request, res: Response) {
+  try {
+    const { categoria } = req.query;
+
+    // Validar la categoria
+    if (categoria) {
+      const categoriaValida = getChistesByCategoriaSchema.safeParse({
+        query: req.query,
+      });
+
+      if (!categoriaValida.success) {
+        return res.status(400).json({
+          message: "Categoria no válida.",
+          success: false,
+        });
+      }
+
+      const chistesCategoria = await Chiste.find({ categoria });
+
+      if (chistesCategoria.length === 0) {
+        return res.status(404).json({
+          message: "No hay chistes que tengan esta categoria en la DB.",
+          success: false,
+        });
+      }
+
+      return res.status(200).json({
+        chistesCategoria,
+        cantidad: chistesCategoria.length,
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      message: "Ocurrió un error al buscar chistes con la categoría dada",
+      success: false,
+    });
+  }
+}
+
+// 7. Get chistes de la db por puntaje - api/chistes?categoria=nombre
 export async function getChistesByPuntaje(req: Request, res: Response) {
   try {
     const { puntaje } = req.query;
@@ -271,46 +311,6 @@ export async function getChistesByPuntaje(req: Request, res: Response) {
     console.error(error);
     return res.status(500).json({
       message: "Ocurrió un error al buscar chistes con el puntaje dado",
-      success: false,
-    });
-  }
-}
-
-// 7. Get chistes de la db por puntaje - api/chistes?categoria=nombre
-export async function getChistesByCategoria(req: Request, res: Response) {
-  try {
-    const { categoria } = req.query;
-
-    // Validar la categoria
-    if (categoria) {
-      const categoriaValida = getChistesByCategoriaSchema.safeParse({
-        query: req.query,
-      });
-
-      if (!categoriaValida.success) {
-        return res.status(400).json({
-          message: "Categoria no válida.",
-          success: true,
-        });
-      }
-
-      const chistesCategoria = await Chiste.find({ categoria });
-
-      if (chistesCategoria.length === 0) {
-        return res.status(404).json({
-          message: "No hay chistes que tengan esta categoria en la DB.",
-          success: false,
-        });
-      }
-
-      return res.status(200).json({
-        chistesCategoria,
-        cantidad: chistesCategoria.length,
-      });
-    }
-  } catch (err) {
-    return res.status(500).json({
-      message: "Ocurrió un error al buscar chistes con la categoría dada",
       success: false,
     });
   }

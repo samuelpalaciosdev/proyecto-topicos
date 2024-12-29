@@ -48,4 +48,32 @@ describe("PUT api/chistes/:id", () => {
       }),
     );
   });
+
+  it("Debería dar error, ya que el id es inválido", async () => {
+    const chisteId = "12345678";
+    // Traigo el primer chiste
+    const primerChiste = await Chiste.findOne({});
+
+    if (!primerChiste) {
+      console.error("No hay chistes disponibles en la DB.");
+      return;
+    }
+
+    const testChiste = {
+      id: chisteId,
+      texto: "Digan hipopotamo sin hi y si tamo",
+      autor: "pepito",
+      puntaje: 2,
+      categoria: CategoriaChiste.Malo, // "malo"
+    };
+
+    const response = await request(app)
+      .put(`/api/chistes/${chisteId}`)
+      .send(testChiste);
+
+    expect(response.status).toBe(400); // Espero que el estatus sea de error
+    // Expect propiedades
+    expect(response.body).toHaveProperty("message");
+    expect(response.body).toHaveProperty("success");
+  });
 });
