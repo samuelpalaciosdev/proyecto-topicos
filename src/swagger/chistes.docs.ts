@@ -2,8 +2,8 @@
  * @swagger
  * /api/chistes:
  *   get:
- *     summary: Obtiene chistes
- *     description: Devuelve todos los chistes o los chistes filtrados por categoría si se proporciona el query.
+ *     summary: Obtiene chistes (incluso filtrados por categoría o puntaje)
+ *     description: Devuelve todos los chistes o los chistes filtrados por categoría o puntaje si se proporcionan los query parameters
  *     parameters:
  *       - in: query
  *         name: categoria
@@ -16,6 +16,14 @@
  *             - malo
  *         required: false
  *         description: Categoría de los chistes a buscar. Si no se proporciona, devuelve todos los chistes.
+ *       - in: query
+ *         name: puntaje
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 10
+ *         required: false
+ *         description: Puntaje de los chistes a buscar, del 1 al 10. Si no se proporciona, devuelve todos los chistes.
  *     responses:
  *       200:
  *         description: Lista de chistes encontrada exitosamente.
@@ -24,12 +32,14 @@
  *             oneOf:
  *               - $ref: '#/components/schemas/AllChistesResponse'
  *               - $ref: '#/components/schemas/ChistesByCategoriaResponse'
+ *               - $ref: '#/components/schemas/ChistesByPuntajeResponse'
  *       400:
- *         description: Parámetro de categoría inválido.
+ *         description: Parámetro de categoría o puntaje inválido.
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/InvalidCategoriaResponse'
+ *             oneOf:
+ *               - $ref: '#/components/schemas/InvalidCategoriaResponse'
+ *               - $ref: '#/components/schemas/InvalidPuntajeResponse'
  *       404:
  *         description: No se encontraron chistes.
  *         content:
@@ -37,6 +47,7 @@
  *             oneOf:
  *               - $ref: '#/components/schemas/NotFoundAllChistesResponse'
  *               - $ref: '#/components/schemas/NotFoundChistesByCategoriaResponse'
+ *               - $ref: '#/components/schemas/NotFoundChistesByPuntajeResponse'
  *       500:
  *         description: Error interno del servidor.
  *         content:
@@ -87,12 +98,28 @@
  *         cantidad:
  *           type: integer
  *           description: Número total de chistes encontrados
+ *     ChistesByPuntajeResponse:
+ *       type: object
+ *       properties:
+ *         chistesPuntaje:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/AllChistesResponse/items'
  *     InvalidCategoriaResponse:
  *       type: object
  *       properties:
  *         message:
  *           type: string
  *           example: "Categoría no válida"
+ *         success:
+ *           type: boolean
+ *           example: false
+ *     InvalidPuntajeResponse:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
+ *           example: "Puntaje no válido, debe ser del 1 al 10"
  *         success:
  *           type: boolean
  *           example: false
@@ -111,6 +138,15 @@
  *         message:
  *           type: string
  *           example: "No hay chistes que tengan esta categoría en la DB"
+ *         success:
+ *           type: boolean
+ *           example: false
+ *     NotFoundChistesByPuntajeResponse:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
+ *           example: "No se encontraron chistes con el puntaje"
  *         success:
  *           type: boolean
  *           example: false
