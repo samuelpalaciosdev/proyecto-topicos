@@ -2,7 +2,7 @@ import app from "./index";
 import { connectDb } from "./db/connect";
 import { swaggerDocs } from "./utils/swagger-ui";
 
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 5000;
 
 const start = async () => {
   try {
