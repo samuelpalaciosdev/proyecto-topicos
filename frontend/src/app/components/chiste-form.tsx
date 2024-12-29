@@ -66,14 +66,28 @@ export function ChisteForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setResult(null);
 
-    console.log("HOLAAA");
-
     try {
       let response;
 
       switch (values.method) {
         case "GET":
-          response = await fetchChiste(values.id);
+          // Si es FUENTE
+          if (getValue === optionsGet[1]) {
+            response = await fetchChiste(`fuente/${fuenteValue.toLowerCase()}`);
+            break;
+          }
+          // Si es puntaje
+          if (getValue === optionsGet[2]) {
+            response = await fetchChiste(`?puntaje=${values.puntaje}`);
+            break;
+          }
+          // Si es categoria
+          if (getValue === optionsGet[3]) {
+            response = await fetchChiste(`?categoria=${values.categoria}`);
+            break;
+          }
+
+          response = await fetchChiste(`/${values.id}`);
           break;
         case "POST":
           response = await crearChiste({

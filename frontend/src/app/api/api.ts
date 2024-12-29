@@ -16,7 +16,7 @@ export async function fetchChiste(req?: string): Promise<ChisteData> {
   /**
    * req: Puede ser ID, query, o la fuente
    */
-  const response = await fetch(`${URL}/api/chistes/${req}`);
+  const response = await fetch(`${URL}/api/chistes${req}`);
 
   if (!response.ok) {
     throw new Error("Fallo al conseguir los chistes");
@@ -48,7 +48,7 @@ export async function crearChiste(chiste: ChisteData): Promise<ChisteData> {
  */
 
 export async function putChiste(chiste: ChisteData): Promise<ChisteData> {
-  const response = await fetch(`${URL}/api/chistes`, {
+  const response = await fetch(`${URL}/api/chistes/${chiste.id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(chiste),
