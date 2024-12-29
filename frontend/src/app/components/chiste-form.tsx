@@ -33,22 +33,24 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectGroup,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ChisteData } from "../api/api";
 
 const optionsReq = ["POST", "GET", "PUT"];
 const categoriaReq = ["dad-joke", "humor-negro", "chistoso", "malo"];
 
 export function ChisteForm() {
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<
+    string | ChisteData | ChisteData[] | null
+  >(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       method: "GET",
+      id: "",
       texto: "",
       autor: "",
       puntaje: 5,
@@ -58,6 +60,8 @@ export function ChisteForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setResult(null);
+
+    console.log("HOLAAA");
 
     try {
       let response;
@@ -87,9 +91,6 @@ export function ChisteForm() {
       setResult(response);
     } catch (err) {
       console.error(err);
-      setResult({
-        error: "Ocurrio un error",
-      });
     }
   }
 
@@ -102,7 +103,7 @@ export function ChisteForm() {
 
       {/* Contenido de la card */}
       <CardContent>
-        <Form {...form}>
+        <Form key={form.watch("method")} {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
@@ -135,7 +136,8 @@ export function ChisteForm() {
             {/* {(form.watch("method") === "GET" ||
               form.watch("method") === "PUT") && ( */}
 
-            {optionsReq[0] == "POST" && (
+            {(form.watch("method") === "GET" ||
+              form.watch("method") === "PUT") && (
               <FormField
                 control={form.control}
                 name="id"
@@ -160,7 +162,7 @@ export function ChisteForm() {
                 {/* Texto */}
                 <FormField
                   control={form.control}
-                  name="id"
+                  name="texto"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Texto del chiste</FormLabel>
