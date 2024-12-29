@@ -109,12 +109,13 @@ export async function createChiste(req: Request, res: Response) {
       });
     }
 
+    // Validar los datos del body con el schema
     const dataValida = chisteSchema.safeParse(req.body);
 
     // Ref: hacer funcion de retorno de errores de zod especificando campo
     if (!dataValida.success) {
       return res.status(400).send({
-        message: "Datos inválido, por favor intente de nuevo",
+        message: "Datos inválidos, por favor intente de nuevo",
         success: false,
       });
     }
@@ -142,7 +143,6 @@ export async function putChiste(req: Request, res: Response) {
   try {
     // Destructurando request
     const query = { _id: req.params.id }; // Id del chiste a actualizar
-    const body = { $set: req.body }; // Datos que se quieren reemplazar
 
     // Check si el id es un id válido de mongoose
     if (!checkValidObjectId(query._id)) {
@@ -152,9 +152,22 @@ export async function putChiste(req: Request, res: Response) {
       });
     }
 
-    const chiste = await Chiste.updateOne(query, body);
+    // Validar los datos del body con el schema
+    const dataValida = chisteSchema.safeParse(req.body);
 
-    return res.status(201).json({
+    if (!dataValida.success) {
+      return res.status(400).send({
+        message: "Datos inválidos, por favor intente de nuevo",
+        success: false,
+      });
+    }
+
+    // Actualiza el chiste que concuerde con el id
+    const chiste = await Chiste.findByIdAndUpdate(query._id, req.body, {
+      new: true, // Retorna el chiste actualizado
+    });
+
+    return res.status(200).json({
       chiste,
       success: true,
     });

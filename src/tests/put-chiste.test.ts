@@ -36,14 +36,15 @@ describe("PUT api/chistes/:id", () => {
       .put(`/api/chistes/${primerChiste._id}`)
       .send(testChiste);
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(200);
     // Mensaje de retorno
     expect(response.body).toEqual(
       expect.objectContaining({
         success: true,
         chiste: expect.objectContaining({
-          acknowledged: true,
-          modifiedCount: expect.any(Number),
+          _id: expect.any(String),
+          texto: expect.any(String),
+          categoria: expect.any(String),
         }),
       }),
     );
