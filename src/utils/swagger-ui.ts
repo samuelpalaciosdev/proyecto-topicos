@@ -14,11 +14,12 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${process.env.PORT || 3005}`, // Servidor de la app
+        url: `http://localhost:${5000}`,
+        // url: `http://localhost:${process.env.PORT || 3005}`, // Servidor de la app
       },
     ],
   },
-  apis: ["./src/routes/*.ts"], // Busca las rutas y con eso forma los docs
+  apis: ["./src/swagger/*docs.ts"], // Busca aquí los docs;
 };
 
 const swaggerSpecs = swaggerJsDoc(swaggerOptions);
