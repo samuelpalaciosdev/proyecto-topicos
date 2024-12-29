@@ -80,7 +80,7 @@ export function ChisteForm() {
           break;
         case "POST":
           response = await crearChiste({
-            texto: values.texto,
+            texto: values.texto!,
             autor: values.autor,
             puntaje: values.puntaje,
             categoria: values.categoria,
