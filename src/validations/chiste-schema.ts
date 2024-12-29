@@ -38,7 +38,12 @@ export const chisteSchema = z.object({
     .max(10, "El puntaje debe ser como máximo 10"),
 
   categoria: z
-    .enum(["dad joke", "humor negro", "chistoso", "malo"])
+    .enum([
+      CategoriaChiste.DadJoke,
+      CategoriaChiste.HumorNegro,
+      CategoriaChiste.Chistoso,
+      CategoriaChiste.Malo,
+    ])
     .describe(
       "Categoría inválida, debe ser: Dad joke, Humor Negro, Chistoso o Malo"
     ),

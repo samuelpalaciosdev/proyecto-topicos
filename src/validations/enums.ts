@@ -5,8 +5,8 @@ export enum FuenteDelChiste {
 }
 
 export enum CategoriaChiste {
-  DadJoke = "dad joke",
-  HumorNegro = "humor negro",
+  DadJoke = "dad-joke",
+  HumorNegro = "humor-negro",
   Chistoso = "chistoso",
   Malo = "malo",
 }

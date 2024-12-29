@@ -73,7 +73,9 @@ export function ChisteForm() {
         case "GET":
           // Si es FUENTE
           if (getValue === optionsGet[1]) {
-            response = await fetchChiste(`fuente/${fuenteValue.toLowerCase()}`);
+            response = await fetchChiste(
+              `/fuente/${fuenteValue.toLowerCase()}`
+            );
             break;
           }
           // Si es puntaje
