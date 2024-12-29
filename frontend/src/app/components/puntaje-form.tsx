@@ -16,7 +16,7 @@ interface FormPuntajeProps {
   control: Control<FormValues>;
 }
 
-export function FormPuntaje({ control }: FormPuntajeProps) {
+export function PuntajeForm({ control }: FormPuntajeProps) {
   return (
     <FormField
       control={control}

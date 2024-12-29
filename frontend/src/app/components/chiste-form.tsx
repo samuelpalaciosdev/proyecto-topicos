@@ -37,12 +37,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChisteData } from "../api/api";
-import { FormPuntaje } from "./form-puntaje";
+import { PuntajeForm } from "./puntaje-form";
+import { CategoriaForm } from "./categoria-form";
 
 const optionsReq: string[] = ["POST", "GET", "PUT", "DELETE"];
 const optionsGet: string[] = ["ID", "FUENTE", "PUNTAJE", "CATEGORIA"];
 const fuentesGet: string[] = ["DAD", "CHUCK", "PROPIO"];
-const categoriaReq = ["dad-joke", "humor-negro", "chistoso", "malo"];
 
 export function ChisteForm() {
   const [result, setResult] = useState<
@@ -143,61 +143,73 @@ export function ChisteForm() {
             />
 
             {form.watch("method") === "GET" && (
-              <FormItem>
-                <FormLabel>Selecciona el GET</FormLabel>
-                <Select
-                  value={getValue}
-                  onValueChange={(value) => setGetValue(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona una opción de GET" />
-                  </SelectTrigger>
-
-                  <SelectContent>
-                    {optionsGet.map((item, index) => (
-                      <SelectItem
-                        key={index}
-                        value={item}
-                        className="px-3 py-2 hover:bg-gray-100"
-                      >
-                        {item}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  Aqui vas a elegir el tipo de búsqueda que quieres utilizar
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-
-            {/* En caso de que sea una FUENTE */}
-            {getValue === "FUENTE" && (
-              <FormItem>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={(value) => setFuenteValue(value)}
-                    defaultValue={fuenteValue}
-                    className="flex flex-col space-y-1"
+              <>
+                <FormItem>
+                  <FormLabel>Selecciona el GET</FormLabel>
+                  <Select
+                    value={getValue}
+                    onValueChange={(value) => setGetValue(value)}
                   >
-                    {fuentesGet.map((fuente, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <RadioGroupItem value={fuente} id={fuente} />
-                        <Label htmlFor={fuente}>{fuente}</Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-              </FormItem>
-            )}
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona una opción de GET" />
+                    </SelectTrigger>
 
-            {/* En caso de que sea PUNTAJE */}
-            {getValue === "PUNTAJE" && <></>}
+                    <SelectContent>
+                      {optionsGet.map((item, index) => (
+                        <SelectItem
+                          key={index}
+                          value={item}
+                          className="px-3 py-2 hover:bg-gray-100"
+                        >
+                          {item}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Aqui vas a elegir el tipo de búsqueda que quieres utilizar
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+
+                {/* En caso de que sea una FUENTE */}
+                {getValue === "FUENTE" && (
+                  <FormItem>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={(value) => setFuenteValue(value)}
+                        defaultValue={fuenteValue}
+                        className="flex flex-col space-y-1"
+                      >
+                        {fuentesGet.map((fuente, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center space-x-2"
+                          >
+                            <RadioGroupItem value={fuente} id={fuente} />
+                            <Label htmlFor={fuente}>{fuente}</Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                  </FormItem>
+                )}
+
+                {/* En caso de que sea PUNTAJE */}
+                {getValue === "PUNTAJE" && (
+                  <PuntajeForm control={form.control} />
+                )}
+
+                {/* En caso de que sea CATEGORIA */}
+                {getValue === "CATEGORIA" && (
+                  <CategoriaForm control={form.control} />
+                )}
+              </>
+            )}
 
             {/* En caso de que quiera buscar por ID, PUT, DELETE */}
 
-            {(getValue === "ID" ||
+            {((getValue === "ID" && form.watch("method") === "GET") ||
               form.watch("method") === "DELETE" ||
               form.watch("method") === "PUT") && (
               <FormField
@@ -254,60 +266,10 @@ export function ChisteForm() {
                   )}
                 />
                 {/* Puntaje */}
-                {/* <FormField
-                  control={form.control}
-                  name="puntaje"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Puntaje</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min={1}
-                          max={10}
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
+                <PuntajeForm control={form.control} />
 
-                <FormPuntaje control={form.control} />
-
-                <FormField
-                  control={form.control}
-                  name="categoria"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Categoría</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="flex items-center space-x-2">
-                          <SelectValue placeholder="Selecciona una categoria" />
-                        </SelectTrigger>
-
-                        <SelectContent>
-                          {categoriaReq.map((item, index) => (
-                            <SelectItem
-                              key={index}
-                              value={item}
-                              className="px-3 py-2 hover:bg-gray-100"
-                            >
-                              {item}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Categoria */}
+                <CategoriaForm control={form.control} />
               </>
             )}
 
