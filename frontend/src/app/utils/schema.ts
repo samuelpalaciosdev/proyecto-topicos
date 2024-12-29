@@ -2,7 +2,7 @@ import * as z from "zod";
 
 export const formSchema = z
   .object({
-    method: z.enum(["GET", "PUT", "POST"]),
+    method: z.enum(["GET", "PUT", "POST", "DELETE"]),
     id: z.string(),
     texto: z.string().optional(),
     autor: z.string().optional(),

@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { formSchema } from "../utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { crearChiste, fetchChiste } from "../api/api";
+import { crearChiste, deleteChiste, fetchChiste, putChiste } from "../api/api";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -37,14 +37,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChisteData } from "../api/api";
+import { SelectItemText } from "@radix-ui/react-select";
 
-const optionsReq = ["POST", "GET", "PUT"];
+const optionsReq: string[] = ["POST", "GET", "PUT", "DELETE"];
+const optionsGet: string[] = ["ID", "FUENTE", "PUNTAJE", "CATEGORIA"];
 const categoriaReq = ["dad-joke", "humor-negro", "chistoso", "malo"];
 
 export function ChisteForm() {
   const [result, setResult] = useState<
     string | ChisteData | ChisteData[] | null
   >(null);
+  const [getValue, setGetValue] = useState<string>(optionsGet[0]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,14 +73,6 @@ export function ChisteForm() {
         case "GET":
           response = await fetchChiste(values.id);
           break;
-        case "PUT":
-          if (!values.id)
-            throw new Error(
-              "el ID es requerido para buscar poder hacer el PUT request"
-            );
-          response = "Wait";
-          // Por desarrollar
-          break;
         case "POST":
           response = await crearChiste({
             texto: values.texto!,
@@ -85,6 +80,18 @@ export function ChisteForm() {
             puntaje: values.puntaje,
             categoria: values.categoria,
           });
+          break;
+        case "PUT":
+          response = await putChiste({
+            id: values.id,
+            texto: values.texto!,
+            autor: values.autor,
+            puntaje: values.puntaje,
+            categoria: values.categoria,
+          });
+          break;
+        case "DELETE":
+          response = await deleteChiste(values.id);
           break;
       }
 
@@ -136,7 +143,40 @@ export function ChisteForm() {
             {/* {(form.watch("method") === "GET" ||
               form.watch("method") === "PUT") && ( */}
 
-            {(form.watch("method") === "GET" ||
+            {form.watch("method") === "GET" && (
+              <>
+                <FormItem>
+                  <FormLabel>Selecciona el GET</FormLabel>
+                  <Select
+                    value={getValue}
+                    onValueChange={(value) => setGetValue(value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona una opción de GET" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {optionsGet.map((item, index) => (
+                        <SelectItem
+                          key={index}
+                          value={item}
+                          className="px-3 py-2 hover:bg-gray-100"
+                        >
+                          {item}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Aqui vas a elegir el tipo de búsqueda que quieres utilizar
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              </>
+            )}
+
+            {(getValue === "ID" ||
+              form.watch("method") === "DELETE" ||
               form.watch("method") === "PUT") && (
               <FormField
                 control={form.control}
@@ -148,7 +188,7 @@ export function ChisteForm() {
                       <Input placeholder="ID del chiste" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Se requiere para el GET y abrir el PUT
+                      Se requiere para el GET, PUT y DELETE
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
