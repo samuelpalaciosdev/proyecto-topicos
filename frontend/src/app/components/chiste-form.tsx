@@ -66,6 +66,8 @@ export function ChisteForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setResult(null);
 
+    console.log(getValue);
+
     try {
       let response;
 
@@ -138,7 +140,10 @@ export function ChisteForm() {
                   <FormLabel>Método</FormLabel>
                   <FormControl>
                     <RadioGroup
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setResult("");
+                      }}
                       defaultValue={field.value}
                       className="flex flex-col space-y-1"
                     >
@@ -289,14 +294,30 @@ export function ChisteForm() {
               </>
             )}
 
-            <Button type="submit">Enviar</Button>
+            <FormItem className="flex flex-col">
+              {form.watch("method") === "GET" && getValue === "ID" && (
+                <FormLabel className="text-red-400">
+                  Si presionas Enviar sin ID, se retornaran todos los elementos
+                  de la DB
+                </FormLabel>
+              )}
+              <Button type="submit" className="w-20">
+                Enviar
+              </Button>
+            </FormItem>
           </form>
         </Form>
       </CardContent>
 
       <CardFooter>
         {result && (
-          <pre className="mt-4 p-4 bg-gray-800 text-white rounded">
+          <pre
+            className="mt-4 p-4 bg-gray-800 text-white rounded"
+            style={{
+              maxHeight: "400px",
+              overflowY: "auto",
+            }}
+          >
             {JSON.stringify(result, null, 2)}
           </pre>
         )}

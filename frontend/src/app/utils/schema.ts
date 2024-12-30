@@ -3,7 +3,7 @@ import * as z from "zod";
 export const formSchema = z
   .object({
     method: z.enum(["GET", "PUT", "POST", "DELETE"]),
-    id: z.string(),
+    id: z.string().optional(),
     texto: z.string().optional(),
     autor: z.string().optional(),
     puntaje: z.number().min(1).max(10),
@@ -27,11 +27,11 @@ export const formSchema = z
       }
     }
 
-    if (values.method === "GET" && !values.id) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["id"],
-        message: "El ID es obligatorio para GET",
-      });
-    }
+    // if (values.method === "GET" && !values.id) {
+    //   ctx.addIssue({
+    //     code: "custom",
+    //     path: ["id"],
+    //     message: "El ID es obligatorio para GET",
+    //   });
+    // }
   });
