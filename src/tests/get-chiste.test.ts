@@ -168,7 +168,7 @@ describe("GET api/chistes?puntaje=$num", () => {
     await disconnectDb();
   });
 
-  it("Debería traer todos los chistes con cierto puntaje de la db", async () => {
+  it("Debería traer todos los chistes con cierto puntaje de la db, en este caso puntaje 5", async () => {
     const puntajeNum = 5;
     const response = await request(app).get(
       `/api/chistes?puntaje=${puntajeNum}`,
