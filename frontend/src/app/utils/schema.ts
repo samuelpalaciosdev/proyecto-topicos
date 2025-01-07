@@ -18,13 +18,7 @@ export const formSchema = z
           message: "El texto es obligatorio para POST y PUT",
         });
       }
-      if (!values.autor) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["autor"],
-          message: "El autor es obligatorio para POST y PUT",
-        });
-      }
+      // El autor tiene un valor por defecto en el POST, así que no es necesario validarlo en el PUT
     }
 
     // if (values.method === "GET" && !values.id) {

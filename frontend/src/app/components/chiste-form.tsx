@@ -45,9 +45,7 @@ const optionsGet: string[] = ["ID", "FUENTE", "PUNTAJE", "CATEGORIA"];
 const fuentesGet: string[] = ["DAD", "CHUCK", "PROPIO"];
 
 export function ChisteForm() {
-  const [result, setResult] = useState<
-    string | ChisteData | ChisteData[] | null
-  >(null);
+  const [result, setResult] = useState<string | ChisteData | ChisteData[] | null>(null);
   const [getValue, setGetValue] = useState<string>(optionsGet[0]);
   const [fuenteValue, setFuenteValue] = useState<string>(fuentesGet[0]);
 
@@ -57,12 +55,14 @@ export function ChisteForm() {
       method: "GET",
       id: "",
       texto: "",
-      autor: "",
+      autor: "Se perdió en el Ávila como Led",
       puntaje: 5,
       categoria: "chistoso",
     },
   });
 
+  // Según el método seleccionado (GET, POST, PUT, DELETE) realiza diferentes acciones:
+  // Guarda la respuesta en el state result
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setResult(null);
 
@@ -75,9 +75,7 @@ export function ChisteForm() {
         case "GET":
           // Si es FUENTE
           if (getValue === optionsGet[1]) {
-            response = await fetchChiste(
-              `/fuente/${fuenteValue.toLowerCase()}`
-            );
+            response = await fetchChiste(`/fuente/${fuenteValue.toLowerCase()}`);
             break;
           }
           // Si es puntaje
@@ -132,6 +130,7 @@ export function ChisteForm() {
       <CardContent>
         <Form key={form.watch("method")} {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            {/* Field para seleccionar el método (GET, POST, PUT, DELETE) */}
             <FormField
               control={form.control}
               name="method"
@@ -148,10 +147,7 @@ export function ChisteForm() {
                       className="flex flex-col space-y-1"
                     >
                       {optionsReq.map((req, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center space-x-2"
-                        >
+                        <div key={index} className="flex items-center space-x-2">
                           <RadioGroupItem value={req} id={req} />
                           <Label htmlFor={req}>{req}</Label>
                         </div>
@@ -163,14 +159,12 @@ export function ChisteForm() {
               )}
             />
 
+            {/* Muestra opciones adicionales solo si el método es GET */}
             {form.watch("method") === "GET" && (
               <>
                 <FormItem>
                   <FormLabel>Selecciona el GET</FormLabel>
-                  <Select
-                    value={getValue}
-                    onValueChange={(value) => setGetValue(value)}
-                  >
+                  <Select value={getValue} onValueChange={(value) => setGetValue(value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecciona una opción de GET" />
                     </SelectTrigger>
@@ -193,7 +187,7 @@ export function ChisteForm() {
                   <FormMessage />
                 </FormItem>
 
-                {/* En caso de que sea una FUENTE */}
+                {/* Muestra opciones de fuente si se seleccionó FUENTE en el GET */}
                 {getValue === "FUENTE" && (
                   <FormItem>
                     <FormControl>
@@ -203,10 +197,7 @@ export function ChisteForm() {
                         className="flex flex-col space-y-1"
                       >
                         {fuentesGet.map((fuente, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center space-x-2"
-                          >
+                          <div key={index} className="flex items-center space-x-2">
                             <RadioGroupItem value={fuente} id={fuente} />
                             <Label htmlFor={fuente}>{fuente}</Label>
                           </div>
@@ -216,20 +207,15 @@ export function ChisteForm() {
                   </FormItem>
                 )}
 
-                {/* En caso de que sea PUNTAJE */}
-                {getValue === "PUNTAJE" && (
-                  <PuntajeForm control={form.control} />
-                )}
+                {/* Muestra formulario de puntaje si se seleccionó PUNTAJE */}
+                {getValue === "PUNTAJE" && <PuntajeForm control={form.control} />}
 
-                {/* En caso de que sea CATEGORIA */}
-                {getValue === "CATEGORIA" && (
-                  <CategoriaForm control={form.control} />
-                )}
+                {/* Muestra formulario de categoría si se seleccionó CATEGORIA */}
+                {getValue === "CATEGORIA" && <CategoriaForm control={form.control} />}
               </>
             )}
 
-            {/* En caso de que quiera buscar por ID, PUT, DELETE */}
-
+            {/* Muestra campo de ID para GET por ID, PUT o DELETE */}
             {((getValue === "ID" && form.watch("method") === "GET") ||
               form.watch("method") === "DELETE" ||
               form.watch("method") === "PUT") && (
@@ -242,17 +228,15 @@ export function ChisteForm() {
                     <FormControl>
                       <Input placeholder="ID del chiste" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Se requiere para el GET, PUT y DELETE
-                    </FormDescription>
+                    <FormDescription>Se requiere para el GET, PUT y DELETE</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             )}
-            {/* En caso de POST o PUT */}
-            {(form.watch("method") === "PUT" ||
-              form.watch("method") === "POST") && (
+
+            {/* Muestra campos adicionales para POST y PUT */}
+            {(form.watch("method") === "PUT" || form.watch("method") === "POST") && (
               <>
                 {/* Texto */}
                 <FormField
@@ -263,10 +247,7 @@ export function ChisteForm() {
                       <FormLabel>Texto del chiste</FormLabel>
 
                       <FormControl>
-                        <Textarea
-                          placeholder="Escribe el chiste aquí"
-                          {...field}
-                        />
+                        <Textarea placeholder="Escribe el chiste aquí" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -286,10 +267,8 @@ export function ChisteForm() {
                     </FormItem>
                   )}
                 />
-                {/* Puntaje */}
+                {/* Campos de puntaje y categoría */}
                 <PuntajeForm control={form.control} />
-
-                {/* Categoria */}
                 <CategoriaForm control={form.control} />
               </>
             )}
@@ -297,8 +276,7 @@ export function ChisteForm() {
             <FormItem className="flex flex-col">
               {form.watch("method") === "GET" && getValue === "ID" && (
                 <FormLabel className="text-red-400">
-                  Si presionas Enviar sin ID, se retornaran todos los elementos
-                  de la DB
+                  Si presionas Enviar sin ID, se retornaran todos los elementos de la DB
                 </FormLabel>
               )}
               <Button type="submit" className="w-20">
@@ -311,13 +289,8 @@ export function ChisteForm() {
 
       <CardFooter>
         {result && (
-          <pre
-            className="mt-4 p-4 bg-gray-800 text-white rounded"
-            style={{
-              maxHeight: "400px",
-              overflowY: "auto",
-            }}
-          >
+          <pre className="mt-4 p-4 bg-gray-800 text-white rounded overflow-y-auto max-h-[400px]">
+            {/* Convierte el objeto result a un string JSON con formato legible */}
             {JSON.stringify(result, null, 2)}
           </pre>
         )}
