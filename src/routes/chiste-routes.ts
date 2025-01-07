@@ -15,10 +15,10 @@ import { rateLimit } from "express-rate-limit";
 const router = Router();
 
 const limiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 min
-  limit: 3, // Se pueden crear máximo 3 chistes cada 5 minutos (POST)
+  windowMs: 2 * 60 * 1000, // 2 min
+  limit: 10, // Se pueden crear máximo 10 chistes cada 2 minutos (POST)
   message: {
-    msg: "Muchas solicitudes desde esta IP. Por favor, espera 5 minutos e inténtalo de nuevo.",
+    msg: "Muchas solicitudes desde esta IP. Por favor, espera 2 minutos e inténtalo de nuevo.",
   },
 });
 
