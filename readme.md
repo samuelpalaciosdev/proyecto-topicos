@@ -21,6 +21,8 @@ Asimismo, documentar el proyecto en swagger fue algo complicado, ya que no encon
 - Nextjs -> 15.1.3
 
 # Cómo correr el proyecto
+- El backend usa el puerto 5000, la ruta base es http://localhost:5000/api/chistes/
+- El front usa el puerto 3000, para acceder a él http://localhost:3000/
 
 **Agregar .env en la raíz de la carpeta del proyecto con los siguientes datos (en el mismo nivel que el docker-compose.yml):**
 
@@ -50,7 +52,7 @@ docker compose run --rm web npm run test
 **Para ver la documentación en swagger:**
 
 ```
-http://localhost:5000/api/docs
+http://localhost:5000/api/docs/
 ```
 
 ### Tuvimos que usar mongoose 6 por problemas con una computadora
