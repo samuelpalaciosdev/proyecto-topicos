@@ -37,7 +37,6 @@ describe("PUT api/chistes/:id", () => {
       .send(testChiste);
 
     expect(response.status).toBe(200);
-
     expect(response.body).toEqual(
       expect.objectContaining({
         success: true,
