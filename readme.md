@@ -56,3 +56,7 @@ http://localhost:5000/api/docs/
 ```
 
 ### Tuvimos que usar mongoose 6 por problemas con una computadora
+
+#### Grupo 8
+- Daniel Ross
+- Samuel Palacios
